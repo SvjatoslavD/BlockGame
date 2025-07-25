@@ -1,116 +1,54 @@
 #include <GL/glew.h>
 #include <SFML/Window.hpp>
+#include <SFML/Graphics/Image.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "include/shader.h"
+#include "include/shaderClass.h"
 #include "include/windowSetup.h"
+#include "include/VBO.h"
+#include "include/VAO.h"
+#include "include/EBO.h"
+#include "include/gameVariables.h"
 
-// ---- code is primarily modeled after code found on learnOpenGL.com, but modified to be used within an SFML context ----
+// ---- code is primarily modeled after code found on learnOpenGL.com and the code posted by Victor Gordan, but modified to be used within an SFML context ----
 
-// camera
-glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 10.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
-
-bool firstMouse = true;
-float yaw   = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch =  0.0f;
-float lastX =  800.0f / 2.0;
-float lastY =  600.0 / 2.0;
-float fov   =  45.0f;
-float mouseScrollSpeed = 50.f;
-
-int win_width = 800;
-int win_height = 600;
-
-// timing
-float deltaTime = 0.0f;	// time between current frame and last frame
-float lastFrame = 0.0f;
-
-float sineBetween(float min, float max, float t);
 void processEventsAndInput(sf::Window& window);
 
 int main() {
     windowSetup windowSetup;
     sf::Window window = windowSetup.start(win_width, win_height);
 
-    // can be much smaller with an EBO
-    float cube_vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    // ---- build and compile our shader program ----
+    Shader ourShader("../shaders/default.vert", "../shaders/default.frag");
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    VAO VAO1;
+    VAO1.Bind();
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    VBO VBO1(cube_vertices,sizeof(cube_vertices));
+    // EBO EBO1(cube_indices,sizeof(cube_indices));
 
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
+    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+    VAO1.LinkAttrib(VBO1,1,2,GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    VAO1.LinkAttrib(VBO1,2,3,GL_FLOAT, 5 * sizeof(int), (void*)(5 * sizeof(float)));
+    VAO1.Unbind();
+    VBO1.Unbind();
+    // EBO1.Unbind();
 
     std::vector<glm::vec3> cube_positions;
-
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
-            for (int k = 0; k < 10; k++) {
-                cube_positions.emplace_back(i,j,k);
+    int iterations = 1;
+    for (int i = 0; i < iterations; i++) {
+        for (int j = 0; j < iterations; j++) {
+            for (int k = 0; k < iterations; k++) {
+                cube_positions.emplace_back(i,j,-k);
             }
         }
     }
 
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // texture coord attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
     // load texture to be used later
-    unsigned int texture;
+    GLuint texture;
     glGenTextures(1, &texture);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
 
     // set the texture wrapping parameters
@@ -118,27 +56,27 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    // load and generate the texture
-    int img_width, img_height, nrChannels;
-    stbi_set_flip_vertically_on_load(true);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Most images are 4 byte aligned, so if pixel data only has 3 bytes, there will be a malformed texture
-    unsigned char *data = stbi_load("../assets/brick1.png", &img_width, &img_height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+    sf::Image tempImage;
+    bool image_loaded = tempImage.loadFromFile("../assets/images/tilemap.png");
+
+    int img_width = tempImage.getSize().x;
+    int img_height = tempImage.getSize().y;
+
+    const std::uint8_t *data = tempImage.getPixelsPtr();
+    if (image_loaded) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img_width, img_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
     else {
         std::cout << "Failed to load texture" << std::endl;
     }
 
-    stbi_image_free(data);
-
-    // ---- build and compile our shader program ----
-
-    Shader ourShader("../shaders/shader1.vert", "../shaders/shader1.frag");
     glUniform1i(glGetUniformLocation(ourShader.ID, "texture"), 0);
 
     sf::Clock clock;
@@ -156,7 +94,7 @@ int main() {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // bind textures on corresponding texture units
-            glActiveTexture(GL_TEXTURE);
+            glActiveTexture(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, texture);
 
             // pass projection matrix to shader (note that in this case it could change every frame)
@@ -168,11 +106,10 @@ int main() {
             ourShader.setMat4("view", view);
 
             // render boxes
-            glBindVertexArray(VAO);
-            for (unsigned int i = 0; i < cube_positions.size(); i++) {
+            VAO1.Bind();
+            for (auto currentCubePos : cube_positions) {
                 // calculate the model matrix for each object and pass it to shader before drawing
                 auto model = glm::mat4(1.0f);
-                glm::vec3 currentCubePos = cube_positions[i];
                 model = glm::translate(model, currentCubePos);
                 ourShader.setMat4("model", model);
 
@@ -181,7 +118,6 @@ int main() {
 
             // render container
             ourShader.use();
-            glBindVertexArray(VAO);
             glDrawArrays(GL_TRIANGLES, 0, 36);
 
             // end the current frame (internally swaps the front and back buffers)
@@ -189,16 +125,12 @@ int main() {
         }
     }
 
-    // ---- optional: de-allocate all resources once they've outlived their purpose ----
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    VAO1.Delete();
+    VBO1.Delete();
+    // EBO1.Delete();
+    ourShader.Delete();
 
     return 0;
-}
-
-float sineBetween(float min, float max, float t) {
-    float halfRange = (max - min) / 2;
-    return min + halfRange + sin(t) * halfRange;
 }
 
 void processEventsAndInput(sf::Window& window) {
