@@ -10,6 +10,7 @@
 #include "include/VAO.h"
 #include "include/EBO.h"
 #include "include/gameVariables.h"
+#include "include/Texture.h"
 
 // ---- code is primarily modeled after code found on learnOpenGL.com and the code posted by Victor Gordan, but modified to be used within an SFML context ----
 
@@ -30,13 +31,13 @@ int main() {
 
     VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
     VAO1.LinkAttrib(VBO1,1,2,GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    VAO1.LinkAttrib(VBO1,2,3,GL_FLOAT, 5 * sizeof(int), (void*)(5 * sizeof(float)));
+    // VAO1.LinkAttrib(VBO1,2,3,GL_FLOAT, 5 * sizeof(int), (void*)(5 * sizeof(float))); //Normal isn't needed yet
     VAO1.Unbind();
     VBO1.Unbind();
     // EBO1.Unbind();
 
     std::vector<glm::vec3> cube_positions;
-    int iterations = 1;
+    int iterations = 20;
     for (int i = 0; i < iterations; i++) {
         for (int j = 0; j < iterations; j++) {
             for (int k = 0; k < iterations; k++) {
@@ -45,39 +46,14 @@ int main() {
         }
     }
 
-    // load texture to be used later
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    Texture GrassTop("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0);
+    Texture GrassSides("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 1, 0);
+    Texture GrassBottom("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
 
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Most images are 4 byte aligned, so if pixel data only has 3 bytes, there will be a malformed texture
-
-    sf::Image tempImage;
-    bool image_loaded = tempImage.loadFromFile("../assets/images/tilemap.png");
-
-    int img_width = tempImage.getSize().x;
-    int img_height = tempImage.getSize().y;
-
-    const std::uint8_t *data = tempImage.getPixelsPtr();
-    if (image_loaded) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img_width, img_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-    else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    glUniform1i(glGetUniformLocation(ourShader.ID, "texture"), 0);
+    GrassTop.texUnit(ourShader,"textureTop",0);
+    GrassBottom.texUnit(ourShader,"textureBottom",2);
+    GrassSides.texUnit(ourShader,"textureSides",1);
 
     sf::Clock clock;
 
@@ -92,10 +68,6 @@ int main() {
             // clear the buffers
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // bind textures on corresponding texture units
-            glActiveTexture(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, texture);
 
             // pass projection matrix to shader (note that in this case it could change every frame)
             glm::mat4 projection = glm::perspective(glm::radians(fov), (float)win_width / (float)win_height, 0.1f, 100.0f);
@@ -113,12 +85,30 @@ int main() {
                 model = glm::translate(model, currentCubePos);
                 ourShader.setMat4("model", model);
 
-                glDrawArrays(GL_TRIANGLES, 0, 36);
+                // Drawing the faces
+                for (int i = 0; i < 6; i++) {
+                    switch (i) {
+                        case 0:
+                            ourShader.setInt("drawnSide", 0);
+                            glActiveTexture(GL_TEXTURE0);
+                            GrassTop.Bind();
+                            glDrawArrays(GL_TRIANGLES, 0, 6);
+                            break;
+                        case 1:
+                            ourShader.setInt("drawnSide", 1);
+                            glActiveTexture(GL_TEXTURE2);
+                            GrassBottom.Bind();
+                            glDrawArrays(GL_TRIANGLES, 6, 6);
+                            break;
+                        default:
+                            ourShader.setInt("drawnSide", 2);
+                            glActiveTexture(GL_TEXTURE1);
+                            GrassSides.Bind();
+                            glDrawArrays(GL_TRIANGLES, i*6,6);
+                            break;
+                    }
+                }
             }
-
-            // render container
-            ourShader.use();
-            glDrawArrays(GL_TRIANGLES, 0, 36);
 
             // end the current frame (internally swaps the front and back buffers)
             window.display();

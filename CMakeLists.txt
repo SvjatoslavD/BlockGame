@@ -14,6 +14,7 @@ set(SOURCE_FILES
         src/EBO.cpp
         src/VAO.cpp
         src/VBO.cpp
+        src/Texture.cpp
 )
 
 set(HEADER_FILES
@@ -23,6 +24,7 @@ set(HEADER_FILES
         include/VAO.h
         include/VBO.h
         include/gameVariables.h
+        include/Texture.h
 )
 
 add_executable(main ${HEADER_FILES} ${SOURCE_FILES} )
