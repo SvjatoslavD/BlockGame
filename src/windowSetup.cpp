@@ -27,7 +27,6 @@ sf::Window windowSetup::start(int win_width, int win_height) {
     glViewport(0,0,win_width,win_height);
     glewExperimental = GL_TRUE;
     glewInit();
-    glEnable(GL_DEPTH_TEST);
 
     return window;
 }

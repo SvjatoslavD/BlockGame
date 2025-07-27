@@ -27,19 +27,19 @@ int main() {
     VAO1.Bind();
 
     VBO VBO1(cube_vertices,sizeof(cube_vertices));
-    // EBO EBO1(cube_indices,sizeof(cube_indices));
+    EBO EBO1(cube_indices,sizeof(cube_indices));
 
     VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
     VAO1.LinkAttrib(VBO1,1,2,GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    // VAO1.LinkAttrib(VBO1,2,3,GL_FLOAT, 5 * sizeof(int), (void*)(5 * sizeof(float))); //Normal isn't needed yet
+    // VAO1.LinkAttrib(VBO1,2,3,GL_FLOAT, 5 * sizeof(int), (void*)(5 * sizeof(float))); //Lighting normal isn't needed yet
     VAO1.Unbind();
     VBO1.Unbind();
-    // EBO1.Unbind();
+    EBO1.Unbind();
 
     std::vector<glm::vec3> cube_positions;
     int iterations = 20;
     for (int i = 0; i < iterations; i++) {
-        for (int j = 0; j < iterations; j++) {
+        for (int j = 0; j < iterations/2; j++) {
             for (int k = 0; k < iterations; k++) {
                 cube_positions.emplace_back(i,j,-k);
             }
@@ -48,16 +48,21 @@ int main() {
 
     Texture GrassTop("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0);
     Texture GrassSides("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 1, 0);
-    Texture GrassBottom("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
-
+    Texture Dirt("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
 
     GrassTop.texUnit(ourShader,"textureTop",0);
-    GrassBottom.texUnit(ourShader,"textureBottom",2);
+    Dirt.texUnit(ourShader,"textureBottom",2);
     GrassSides.texUnit(ourShader,"textureSides",1);
 
     sf::Clock clock;
 
     while (window.isOpen()) {
+        // Enable some options
+        glEnable(GL_DEPTH_TEST);
+        // glEnable(GL_CULL_FACE);
+        // glCullFace(GL_BACK);
+        // glFrontFace(GL_CW);
+
         float currentFrame =clock.getElapsedTime().asSeconds();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -66,7 +71,7 @@ int main() {
 
         { // rendering the cubes to the screen
             // clear the buffers
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            glClearColor(0.5f, 0.8f, 0.92f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // pass projection matrix to shader (note that in this case it could change every frame)
@@ -92,19 +97,19 @@ int main() {
                             ourShader.setInt("drawnSide", 0);
                             glActiveTexture(GL_TEXTURE0);
                             GrassTop.Bind();
-                            glDrawArrays(GL_TRIANGLES, 0, 6);
+                            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,(void*)0);
                             break;
                         case 1:
                             ourShader.setInt("drawnSide", 1);
                             glActiveTexture(GL_TEXTURE2);
-                            GrassBottom.Bind();
-                            glDrawArrays(GL_TRIANGLES, 6, 6);
+                            Dirt.Bind();
+                            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,(void*)(6*sizeof(float)));
                             break;
                         default:
                             ourShader.setInt("drawnSide", 2);
                             glActiveTexture(GL_TEXTURE1);
                             GrassSides.Bind();
-                            glDrawArrays(GL_TRIANGLES, i*6,6);
+                            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,(void*)(6*sizeof(float)*i));
                             break;
                     }
                 }
@@ -117,7 +122,7 @@ int main() {
 
     VAO1.Delete();
     VBO1.Delete();
-    // EBO1.Delete();
+    EBO1.Delete();
     ourShader.Delete();
 
     return 0;
@@ -185,7 +190,7 @@ void processEventsAndInput(sf::Window& window) {
         }
 
         // process input
-        float cameraSpeed = 4.f * deltaTime;
+        float cameraSpeed = 6.f * deltaTime;
         if (isKeyPressed(sf::Keyboard::Key::W)) {
             cameraPos += cameraSpeed * cameraFront;
         }
@@ -197,6 +202,12 @@ void processEventsAndInput(sf::Window& window) {
         }
         if (isKeyPressed(sf::Keyboard::Key::D)) {
             cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        }
+        if (isKeyPressed(sf::Keyboard::Key::Space)) {
+            cameraPos += cameraUp * cameraSpeed;
+        }
+        if (isKeyPressed(sf::Keyboard::Key::LShift)) {
+            cameraPos -= cameraUp * cameraSpeed;
         }
         if (isKeyPressed(sf::Keyboard::Key::Q)) {window.close();}
 }
