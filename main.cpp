@@ -46,13 +46,13 @@ int main() {
         }
     }
 
-    Texture GrassTop("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0);
-    Texture GrassSides("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 1, 0);
+    Texture grassTop("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0);
+    Texture grassSides("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 1, 0);
     Texture Dirt("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
 
-    GrassTop.texUnit(ourShader,"textureTop",0);
+    grassTop.texUnit(ourShader,"textureTop",0);
     Dirt.texUnit(ourShader,"textureBottom",2);
-    GrassSides.texUnit(ourShader,"textureSides",1);
+    grassSides.texUnit(ourShader,"textureSides",1);
 
     sf::Clock clock;
 
@@ -96,7 +96,7 @@ int main() {
                         case 0:
                             ourShader.setInt("drawnSide", 0);
                             glActiveTexture(GL_TEXTURE0);
-                            GrassTop.Bind();
+                            grassTop.Bind();
                             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,(void*)0);
                             break;
                         case 1:
@@ -108,7 +108,7 @@ int main() {
                         default:
                             ourShader.setInt("drawnSide", 2);
                             glActiveTexture(GL_TEXTURE1);
-                            GrassSides.Bind();
+                            grassSides.Bind();
                             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,(void*)(6*sizeof(float)*i));
                             break;
                     }

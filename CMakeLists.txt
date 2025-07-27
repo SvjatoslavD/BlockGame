@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.30)
 project(BlockGame)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_SOURCE_DIR ${CMAKE_BINARY_DIR})
 
 find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
