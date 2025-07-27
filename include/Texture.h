@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 #include <SFML/Graphics.hpp>
 
-#include"shaderClass.h"
+#include"Shader.h"
 
 class Texture
 {

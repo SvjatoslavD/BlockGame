@@ -8,9 +8,9 @@
 #include <SFML/Window.hpp>
 #include "GL/glew.h"
 
-class windowSetup {
+class WindowSetup {
     public:
-    windowSetup();
+    WindowSetup();
     sf::Window start(int win_width, int win_height);
 };
 

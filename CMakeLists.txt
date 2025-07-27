@@ -10,7 +10,7 @@ find_package(glm CONFIG REQUIRED)
 
 set(SOURCE_FILES
         main.cpp
-        src/shaderClass.cpp
+        src/Shader.cpp
         src/windowSetup.cpp
         src/EBO.cpp
         src/VAO.cpp
@@ -19,13 +19,15 @@ set(SOURCE_FILES
 )
 
 set(HEADER_FILES
-        include/shaderClass.h
+        include/Shader.h
         include/windowSetup.h
         include/EBO.h
         include/VAO.h
         include/VBO.h
         include/gameVariables.h
         include/Texture.h
+        src/Chunk.cpp
+        include/Chunk.h
 )
 
 add_executable(main ${HEADER_FILES} ${SOURCE_FILES} )

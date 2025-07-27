@@ -2,14 +2,14 @@
 // Created by svjat on 7/23/2025.
 //
 
-#include "../include/windowSetup.h"
+#include "../include/WindowSetup.h"
 
-windowSetup::windowSetup() {
+WindowSetup::WindowSetup() {
 
 }
 
 
-sf::Window windowSetup::start(int win_width, int win_height) {
+sf::Window WindowSetup::start(int win_width, int win_height) {
     // load variables needed for the creation of the window
     sf::ContextSettings settings;
     settings.majorVersion = 3;

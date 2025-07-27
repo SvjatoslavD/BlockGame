@@ -4,12 +4,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "include/shaderClass.h"
-#include "include/windowSetup.h"
+#include "include/Shader.h"
+#include "include/WindowSetup.h"
 #include "include/VBO.h"
 #include "include/VAO.h"
 #include "include/EBO.h"
-#include "include/gameVariables.h"
+#include "include/GameVariables.h"
 #include "include/Texture.h"
 
 // ---- code is primarily modeled after code found on learnOpenGL.com and the code posted by Victor Gordan, but modified to be used within an SFML context ----
@@ -17,7 +17,7 @@
 void processEventsAndInput(sf::Window& window);
 
 int main() {
-    windowSetup windowSetup;
+    WindowSetup windowSetup;
     sf::Window window = windowSetup.start(win_width, win_height);
 
     // ---- build and compile our shader program ----
@@ -59,9 +59,9 @@ int main() {
     while (window.isOpen()) {
         // Enable some options
         glEnable(GL_DEPTH_TEST);
-        // glEnable(GL_CULL_FACE);
-        // glCullFace(GL_BACK);
-        // glFrontFace(GL_CW);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CW);
 
         float currentFrame =clock.getElapsedTime().asSeconds();
         deltaTime = currentFrame - lastFrame;
