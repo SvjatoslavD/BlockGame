@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "include/Chunk.h"
 #include "include/Shader.h"
 #include "include/WindowSetup.h"
 #include "include/VBO.h"
@@ -23,36 +24,15 @@ int main() {
     // ---- build and compile our shader program ----
     Shader ourShader("../shaders/default.vert", "../shaders/default.frag");
 
-    VAO VAO1;
-    VAO1.Bind();
-
-    VBO VBO1(cube_vertices,sizeof(cube_vertices));
-    EBO EBO1(cube_indices,sizeof(cube_indices));
-
-    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
-    VAO1.LinkAttrib(VBO1,1,2,GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    // VAO1.LinkAttrib(VBO1,2,3,GL_FLOAT, 5 * sizeof(int), (void*)(5 * sizeof(float))); //Lighting normal isn't needed yet
-    VAO1.Unbind();
-    VBO1.Unbind();
-    EBO1.Unbind();
-
-    std::vector<glm::vec3> cube_positions;
-    int iterations = 20;
-    for (int i = 0; i < iterations; i++) {
-        for (int j = 0; j < iterations/2; j++) {
-            for (int k = 0; k < iterations; k++) {
-                cube_positions.emplace_back(i,j,-k);
-            }
-        }
-    }
+    Chunk ourChunk(1);
 
     Texture grassTop("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0);
     Texture grassSides("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 1, 0);
-    Texture Dirt("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
+    Texture dirt("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
 
     grassTop.texUnit(ourShader,"textureTop",0);
-    Dirt.texUnit(ourShader,"textureBottom",2);
     grassSides.texUnit(ourShader,"textureSides",1);
+    dirt.texUnit(ourShader,"textureBottom",2);
 
     sf::Clock clock;
 
@@ -69,60 +49,34 @@ int main() {
 
         processEventsAndInput(window);
 
-        { // rendering the cubes to the screen
-            // clear the buffers
-            glClearColor(0.5f, 0.8f, 0.92f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // rendering the cubes to the screen
+        // clear the buffers
+        glClearColor(0.5f, 0.8f, 0.92f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // pass projection matrix to shader (note that in this case it could change every frame)
-            glm::mat4 projection = glm::perspective(glm::radians(fov), (float)win_width / (float)win_height, 0.1f, 100.0f);
-            ourShader.setMat4("projection", projection);
+        // pass projection matrix to shader (note that in this case it could change every frame)
+        glm::mat4 projection = glm::perspective(glm::radians(fov), (float)win_width / (float)win_height, 0.1f, 100.0f);
+        ourShader.setMat4("projection", projection);
 
-            // camera/view transformation
-            glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-            ourShader.setMat4("view", view);
+        // camera/view transformation
+        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        ourShader.setMat4("view", view);
 
-            // render boxes
-            VAO1.Bind();
-            for (auto currentCubePos : cube_positions) {
-                // calculate the model matrix for each object and pass it to shader before drawing
-                auto model = glm::mat4(1.0f);
-                model = glm::translate(model, currentCubePos);
-                ourShader.setMat4("model", model);
+        // calculate the model matrix for each object and pass it to shader before drawing
+        auto model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.f,0.f,0.f));
+        ourShader.setMat4("model", model);
 
-                // Drawing the faces
-                for (int i = 0; i < 6; i++) {
-                    switch (i) {
-                        case 0:
-                            ourShader.setInt("drawnSide", 0);
-                            glActiveTexture(GL_TEXTURE0);
-                            grassTop.Bind();
-                            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,(void*)0);
-                            break;
-                        case 1:
-                            ourShader.setInt("drawnSide", 1);
-                            glActiveTexture(GL_TEXTURE2);
-                            Dirt.Bind();
-                            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,(void*)(6*sizeof(float)));
-                            break;
-                        default:
-                            ourShader.setInt("drawnSide", 2);
-                            glActiveTexture(GL_TEXTURE1);
-                            grassSides.Bind();
-                            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,(void*)(6*sizeof(float)*i));
-                            break;
-                    }
-                }
-            }
+        // Drawing the faces
+        ourShader.use();
+        ourShader.setInt("drawnSide", 2);
+        glActiveTexture(GL_TEXTURE1);
+        grassSides.Bind();
+        ourChunk.RenderChunk();
 
-            // end the current frame (internally swaps the front and back buffers)
-            window.display();
-        }
+        window.display();
     }
 
-    VAO1.Delete();
-    VBO1.Delete();
-    EBO1.Delete();
     ourShader.Delete();
 
     return 0;

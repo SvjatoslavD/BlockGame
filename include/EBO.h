@@ -5,12 +5,13 @@
 #ifndef EBO_H
 #define EBO_H
 
+#include <vector>
 #include <GL/glew.h>
 
 class EBO {
 public:
 	GLuint ID;
-	EBO(GLuint* indicies, GLsizeiptr size);
+	EBO(std::vector<unsigned int>& indices);
 
 	void Bind();
 	void Unbind();

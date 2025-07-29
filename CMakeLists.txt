@@ -16,6 +16,7 @@ set(SOURCE_FILES
         src/VAO.cpp
         src/VBO.cpp
         src/Texture.cpp
+        src/Chunk.cpp
 )
 
 set(HEADER_FILES
@@ -26,7 +27,6 @@ set(HEADER_FILES
         include/VBO.h
         include/gameVariables.h
         include/Texture.h
-        src/Chunk.cpp
         include/Chunk.h
 )
 

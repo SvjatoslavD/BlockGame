@@ -8,8 +8,9 @@
 // Move these variables to a game class at some point
 
 #include <glm/glm.hpp>
+#include "VBO.h"
 // camera
-glm::vec3 cameraPos   = glm::vec3(0.0f, 10.0f, 10.0f);
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 5.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -29,45 +30,45 @@ float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
 // Vec3 : Pos, Vec2 : Texture Coords, Vec3 : lighting normal
-float cube_vertices[] = {
-	// Top
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+std::vector<Vertex> cube_vertices = {
+	// Front (+Z)
+	{{-0.5f, -0.5f,  0.5f}, {0, 0}},
+	{{ 0.5f, -0.5f,  0.5f}, {1, 0}},
+	{{ 0.5f,  0.5f,  0.5f}, {1, 1}},
+	{{-0.5f,  0.5f,  0.5f}, {0, 1}},
 
-	// Bottom
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	// Back (-Z)
+	{{ 0.5f, -0.5f, -0.5f}, {0, 0}},
+	{{-0.5f, -0.5f, -0.5f}, {1, 0}},
+	{{-0.5f,  0.5f, -0.5f}, {1, 1}},
+	{{ 0.5f,  0.5f, -0.5f}, {0, 1}},
 
-	// Back
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	// Right (+X)
+	{{ 0.5f, -0.5f,  0.5f}, {0, 0}},
+	{{ 0.5f, -0.5f, -0.5f}, {1, 0}},
+	{{ 0.5f,  0.5f, -0.5f}, {1, 1}},
+	{{ 0.5f,  0.5f,  0.5f}, {0, 1}},
 
-	// Front
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	// Left (-X)
+	{{-0.5f, -0.5f, -0.5f}, {0, 0}},
+	{{-0.5f, -0.5f,  0.5f}, {1, 0}},
+	{{-0.5f,  0.5f,  0.5f}, {1, 1}},
+	{{-0.5f,  0.5f, -0.5f}, {0, 1}},
 
-	// Left
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	// Top (+Y)
+	{{-0.5f,  0.5f,  0.5f}, {0, 0}},
+	{{ 0.5f,  0.5f,  0.5f}, {1, 0}},
+	{{ 0.5f,  0.5f, -0.5f}, {1, 1}},
+	{{-0.5f,  0.5f, -0.5f}, {0, 1}},
 
-	 // Right
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f, 1.0f
+	// Bottom (-Y)
+	{{-0.5f, -0.5f, -0.5f}, {0, 0}},
+	{{ 0.5f, -0.5f, -0.5f}, {1, 0}},
+	{{ 0.5f, -0.5f,  0.5f}, {1, 1}},
+	{{-0.5f, -0.5f,  0.5f}, {0, 1}},
 };
 
-unsigned int cube_indices[] = {
+std::vector<unsigned int> cube_indices= {
 	0,1,2,2,3,0,		// Top
 	4,5,6,6,7,4,		// Bottom
 	8,9,10,10,11,8,		// Back
