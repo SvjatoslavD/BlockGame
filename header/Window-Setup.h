@@ -12,7 +12,7 @@ class WindowSetup {
 public:
     WindowSetup();
     ~WindowSetup();
-    sf::Window start(int win_width, int win_height);
+    sf::Window Start(int win_width, int win_height);
 };
 
 #endif // WINDOWSETUP_H

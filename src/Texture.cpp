@@ -52,11 +52,11 @@ Texture::Texture(const std::string& fileName, GLenum texType, GLenum slot, GLenu
     }
 };
 
-void Texture::texUnit(Shader shader, const char* uniform, GLuint unit) {
+void Texture::TexUnit(Shader shader, const char* uniform, GLuint unit) {
     // Gets the location of the uniform
     GLuint texUni = glGetUniformLocation(shader.ID, uniform);
     // Shader needs to be activated before changing the value of a uniform
-    shader.use();
+    shader.Activate();
     // Sets the value of the uniform
     glUniform1i(texUni, unit);
 }

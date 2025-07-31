@@ -2,14 +2,16 @@
 // Created by svjat on 7/23/2025.
 //
 
-#include "../header/WindowSetup.h"
+#include "../header/Window-Setup.h"
+
+#include <iostream>
 
 WindowSetup::WindowSetup() {}
 
 WindowSetup::~WindowSetup() {}
 
 
-sf::Window WindowSetup::start(int win_width, int win_height) {
+sf::Window WindowSetup::Start(int win_width, int win_height) {
     // load variables needed for the creation of the window
     sf::ContextSettings settings;
     settings.majorVersion = 3;
@@ -22,7 +24,10 @@ sf::Window WindowSetup::start(int win_width, int win_height) {
     window.setFramerateLimit(60);
 
     // initialize the OpenGL states
-    window.setActive();
+    bool active = window.setActive();
+    if (!active) {
+        std::cerr << "Failed to set active window" << std::endl;
+    }
     glViewport(0, 0, win_width, win_height);
     glewExperimental = GL_TRUE;
     glewInit();

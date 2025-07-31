@@ -22,7 +22,7 @@ public:
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);
     // use/activate the shader
-    void use() const;
+    void Activate() const;
     void Delete();
     // utility uniform functions
     void setBool(const std::string& name, bool value) const;
@@ -36,7 +36,7 @@ public:
     void setMat4(const std::string& name, const glm::mat4& value) const;
 
 private:
-    void checkCompileErrors(unsigned int shader, std::string type);
+    void CheckCompileErrors(unsigned int shader, std::string type);
 };
 
 #endif // SHADER_H

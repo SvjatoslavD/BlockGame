@@ -11,22 +11,22 @@
 
 class Camera {
 public:
-    glm::vec3 Position;
-    glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+    Camera(int width, int height, glm::vec3 position, sf::Vector2i window_center);
 
-    int width, height;
+    void Matrix(float FOV_deg, float near_plane, float far_plane, Shader& shader, const char* uniform);
+    void Inputs(sf::Window& window, float delta_time);
+private:
+    glm::vec3 position_;
+    glm::vec3 orientation_ = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    float speed = 1.0f;
-    float sensitivity = 100.0f;
-    bool firstMouse = true;
-    float yaw = -90.0f;
-    float pitch = 0.0f;
-    sf::Vector2i windowCenter;
+    int width_, height_;
 
-    Camera(int width, int height, glm::vec3 position, sf::Vector2i localWindowCenter);
-
-    void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
-    void Inputs(sf::Window& window, float deltaTime);
+    float speed_ = 1.0f;
+    float sensitivity_ = 100.0f;
+    bool first_mouse_ = true;
+    float yaw_ = -90.0f;
+    float pitch_ = 0.0f;
+    sf::Vector2i window_center_;
 };
 #endif // CAMERA_H

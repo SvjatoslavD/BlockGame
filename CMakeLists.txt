@@ -10,29 +10,32 @@ find_package(glm CONFIG REQUIRED)
 
 set(SOURCE_FILES
         main.cpp
-        src/Shader.cpp
-        src/windowSetup.cpp
+        src/shader.cpp
+        src/Window-Setup.cpp
         src/EBO.cpp
         src/VAO.cpp
         src/VBO.cpp
-        src/Texture.cpp
-        src/Chunk.cpp
-        src/Camera.cpp
+        src/texture.cpp
+        src/chunk.cpp
+        src/camera.cpp
 )
 
 set(HEADER_FILES
-        header/Shader.h
-        header/windowSetup.h
+        header/shader.h
+        header/Window-Setup.h
         header/EBO.h
         header/VAO.h
         header/VBO.h
-        header/Texture.h
-        header/Chunk.h
-        header/Camera.h
-        external/FastNoiseLite.h
+        header/texture.h
+        header/chunk.h
+        header/camera.h
 )
 
-add_executable(main ${HEADER_FILES} ${SOURCE_FILES} )
+set(EXTERNAL_LIBRARIES
+    external/FastNoiseLite.h
+)
+
+add_executable(main ${HEADER_FILES} ${SOURCE_FILES} ${EXTERNAL_LIBRARIES})
 
 target_link_libraries(main PRIVATE
         GLEW::GLEW

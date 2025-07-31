@@ -16,7 +16,7 @@ public:
     GLenum type;
     Texture(const std::string& fileName, GLenum texType, GLenum slot, GLenum format, GLenum pixelType, int atlasX, int atlasY);
 
-    void texUnit(Shader shader, const char* uniform, GLuint unit);
+    void TexUnit(Shader shader, const char* uniform, GLuint unit);
     void Bind();
     void Unbind();
     void Delete();

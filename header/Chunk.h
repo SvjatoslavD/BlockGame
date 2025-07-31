@@ -14,21 +14,21 @@
 
 class Chunk {
 public:
-    Chunk(int tileSize);
+    explicit Chunk(int tileSize);
     ~Chunk();
 
     void RenderChunk();
 
 private:
-    int tileSize;
-    VAO VAO1;
-    VBO VBO1;
-    EBO EBO1;
-    unsigned int chunkXZ;
-    unsigned int chunkY;
-    unsigned int triangleCount;
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
+    int tile_size_;
+    VAO VAO1_;
+    VBO VBO1_;
+    EBO EBO1_;
+    unsigned int chunk_xz_;
+    unsigned int chunk_y_;
+    unsigned int triangle_count_;
+    std::vector<Vertex> vertices_;
+    std::vector<unsigned int> indices_;
 
     void GenerateChunk();
     void GenerateFaces();

@@ -8,14 +8,14 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/quaternion_trigonometric.hpp>
 
-Camera::Camera(int width, int height, glm::vec3 position, sf::Vector2i windowCenter) {
-    this->width = width;
-    this->height = height;
-    this->Position = position;
-    this->windowCenter = windowCenter;
+Camera::Camera(int width, int height, glm::vec3 position, sf::Vector2i window_center) {
+    this->width_ = width;
+    this->height_ = height;
+    this->position_ = position;
+    this->window_center_ = window_center;
 }
 
-void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform) {
+void Camera::Matrix(float FOV_deg, float near_plane, float far_plane, Shader& shader, const char* uniform) {
     glm::mat4 view;
     glm::mat4 projection;
 
@@ -23,16 +23,16 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shade
     glm::mat4 model = glm::mat4(1.0f);
 
     // turns world coords into 2d positions
-    view = glm::lookAt(Position, Position + Orientation, Up);
+    view = glm::lookAt(position_, position_ + orientation_, up_);
 
     // defines how the points are seen on the screen
-    projection = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
+    projection = glm::perspective(glm::radians(FOV_deg), (float)width_ / height_, near_plane, far_plane);
 
     // pass all matrices to the shader
     shader.setMat4(uniform, (projection * view * model));
 }
 
-void Camera::Inputs(sf::Window& window, float deltaTime) {
+void Camera::Inputs(sf::Window& window, float delta_time) {
     // handle events
     while (const std::optional event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
@@ -48,10 +48,10 @@ void Camera::Inputs(sf::Window& window, float deltaTime) {
                 float posX = static_cast<float>(mouseMoved->position.x);
                 float posY = static_cast<float>(mouseMoved->position.y);
 
-                if (firstMouse) {
+                if (first_mouse_) {
                     posX = window.getSize().x / 2;
                     posY = window.getSize().y / 2;
-                    firstMouse = false;
+                    first_mouse_ = false;
                 }
 
                 // some offsets - might be due to setting mouses position based on top - left coord
@@ -62,30 +62,30 @@ void Camera::Inputs(sf::Window& window, float deltaTime) {
                 xoffset *= sensitivity;
                 yoffset *= sensitivity;
 
-                yaw += xoffset;
-                pitch += yoffset;
+                yaw_ += xoffset;
+                pitch_ += yoffset;
 
                 // make sure that when pitch is out of bounds, screen doesn't get flipped
-                if (pitch > 89.0f) {
-                    pitch = 89.0f;
+                if (pitch_ > 89.0f) {
+                    pitch_ = 89.0f;
                 };
-                if (pitch < -89.0f) {
-                    pitch = -89.0f;
+                if (pitch_ < -89.0f) {
+                    pitch_ = -89.0f;
                 };
 
                 glm::vec3 newOrientation;
-                newOrientation.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-                newOrientation.y = sin(glm::radians(pitch));
-                newOrientation.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-                Orientation = glm::normalize(newOrientation);
+                newOrientation.x = cos(glm::radians(yaw_)) * cos(glm::radians(pitch_));
+                newOrientation.y = sin(glm::radians(pitch_));
+                newOrientation.z = sin(glm::radians(yaw_)) * cos(glm::radians(pitch_));
+                orientation_ = glm::normalize(newOrientation);
 
-                sf::Mouse::setPosition(windowCenter);
+                sf::Mouse::setPosition(window_center_);
             }
         }
         if (const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>()) {
             if (mouseButtonReleased->button == sf::Mouse::Button::Left) {
                 window.setMouseCursorVisible(true);
-                firstMouse = true;
+                first_mouse_ = true;
             }
         }
         // if (const auto* mouseWheel = event->getIf<sf::Event::MouseWheelScrolled>()) {
@@ -101,25 +101,25 @@ void Camera::Inputs(sf::Window& window, float deltaTime) {
     }
 
     // process input
-    float cameraSpeed = 6.f * deltaTime;
+    float cameraSpeed = 6.f * delta_time;
 
     if (isKeyPressed(sf::Keyboard::Key::W)) {
-        Position += cameraSpeed * Orientation;
+        position_ += cameraSpeed * orientation_;
     }
     if (isKeyPressed(sf::Keyboard::Key::S)) {
-        Position -= cameraSpeed * Orientation;
+        position_ -= cameraSpeed * orientation_;
     }
     if (isKeyPressed(sf::Keyboard::Key::A)) {
-        Position -= glm::normalize(glm::cross(Orientation, Up)) * cameraSpeed;
+        position_ -= glm::normalize(glm::cross(orientation_, up_)) * cameraSpeed;
     }
     if (isKeyPressed(sf::Keyboard::Key::D)) {
-        Position += glm::normalize(glm::cross(Orientation, Up)) * cameraSpeed;
+        position_ += glm::normalize(glm::cross(orientation_, up_)) * cameraSpeed;
     }
     if (isKeyPressed(sf::Keyboard::Key::Space)) {
-        Position += Up * cameraSpeed;
+        position_ += up_ * cameraSpeed;
     }
     if (isKeyPressed(sf::Keyboard::Key::LShift)) {
-        Position -= Up * cameraSpeed;
+        position_ -= up_ * cameraSpeed;
     }
     if (isKeyPressed(sf::Keyboard::Key::Q)) {
         window.close();

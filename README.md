@@ -1,7 +1,3 @@
-This repository is to track my progress learning OpenGL.
+BlockGame is a minecraft clone which I'm building solo using Cpp, SFML, and OpenGL
 
-My main resource is [LearnOpenGL](https://learnopengl.com/)
-
-I also often refers to the [SFML tutorials](https://www.sfml-dev.org/tutorials/)
-
-6/19/25: Transformations
+While building this project, I mainly referenced [LearnOpenGL.com](https://learnopengl.com/), the [SFML tutorials](https://www.sfml-dev.org/tutorials/), [Victor Gordan](https://www.youtube.com/@VictorGordan), and [WSAL Evan](https://www.youtube.com/@wsalevan)
