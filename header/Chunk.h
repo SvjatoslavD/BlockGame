@@ -22,6 +22,8 @@ public:
 private:
 	int tileSize = 16;
 	VAO VAO1;
+	VBO VBO1;
+	EBO EBO1;
 	unsigned int chunkSize;
 	unsigned int triangleCount;
 	std::vector<Vertex> vertices;

@@ -19,8 +19,10 @@ struct Vertex {
 class VBO {
 public:
 	GLuint ID;
+	VBO();
 	VBO(std::vector<Vertex>& vertices);
 
+	void SetData(std::vector<Vertex>& vertices);
 	void Bind();
 	void Unbind();
 	void Delete();

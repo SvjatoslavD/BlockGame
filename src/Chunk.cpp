@@ -18,6 +18,8 @@ Chunk::Chunk(unsigned int chunkSize) {
 
 Chunk::~Chunk() {
 	VAO1.Delete();
+	VBO1.Delete();
+	EBO1.Delete();
 }
 
 void Chunk::GenerateChunk() {
@@ -103,8 +105,9 @@ void Chunk::GenerateChunk() {
 void Chunk::GenerateFaces() {
 	VAO1.Bind();
 
-	VBO VBO1(vertices);
-	EBO EBO1(indices);
+	VBO1.SetData(vertices);
+	EBO1.SetData(indices);
+
 
 	VBO1.Bind();
 	EBO1.Bind();
