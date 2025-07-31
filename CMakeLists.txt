@@ -10,14 +10,14 @@ find_package(glm CONFIG REQUIRED)
 
 set(SOURCE_FILES
         main.cpp
-        src/shader.cpp
-        src/Window-Setup.cpp
-        src/EBO.cpp
-        src/VAO.cpp
-        src/VBO.cpp
-        src/texture.cpp
-        src/chunk.cpp
-        src/camera.cpp
+        source/shader.cpp
+        source/Window-Setup.cpp
+        source/EBO.cpp
+        source/VAO.cpp
+        source/VBO.cpp
+        source/texture.cpp
+        source/chunk.cpp
+        source/camera.cpp
 )
 
 set(HEADER_FILES

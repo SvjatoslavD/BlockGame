@@ -1,11 +1,17 @@
 I'm mainly referencing the Google C++ style guide found here : https://google.github.io/styleguide/cppguide.html#Naming
 
-fileNames : Uppercase and dashes
-classes, structs, types aliases, enums, and templates : all are pascal case
-enum members : same as constants
+folder names : lowercase with dashes
+file names (code): uppercase and dashes
+file names (other) : lowercase and dashes
+
+class, struct, types alias, enum, and template names : pascal case
 functions : pascal case
 functions (accessors) : camel case
-variables : snake case
+
+enum members : same as constants
 constants : leading k with camel case following
+
+variables : snake case
 private class members: snake case with a trailing underscore
+
 macros : caps lock snake case

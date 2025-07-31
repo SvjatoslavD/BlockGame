@@ -6,11 +6,8 @@
 
 #include "header/Camera.h"
 #include "header/Chunk.h"
-#include "header/EBO.h"
 #include "header/Shader.h"
 #include "header/Texture.h"
-#include "header/VAO.h"
-#include "header/VBO.h"
 #include "header/Window-Setup.h"
 
 // ---- code is primarily modeled after code found on learnOpenGL.com and the code posted by Victor Gordan, but modified to be used within an SFML context ----

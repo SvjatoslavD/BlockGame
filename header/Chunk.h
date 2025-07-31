@@ -12,6 +12,8 @@
 #include "VAO.h"
 #include "VBO.h"
 
+struct CubeData;
+
 class Chunk {
 public:
     explicit Chunk(int tileSize);
@@ -24,13 +26,22 @@ private:
     VAO VAO1_;
     VBO VBO1_;
     EBO EBO1_;
-    unsigned int chunk_xz_;
-    unsigned int chunk_y_;
-    unsigned int triangle_count_;
+
+    unsigned int chunk_xz_size_;
+    unsigned int chunk_y_size_;
+
+    std::vector<CubeData> cube_locations_;
     std::vector<Vertex> vertices_;
     std::vector<unsigned int> indices_;
 
+    void GenerateChunkData();
     void GenerateChunk();
     void GenerateFaces();
+    float CalculateIndex(float x, float y, float z) const;
+};
+
+struct CubeData {
+    bool is_air;
+    glm::vec3 position;
 };
 #endif // CHUNK_H
