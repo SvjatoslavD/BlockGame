@@ -8,29 +8,29 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <vector>
+#include "EBO.h"
 #include "VAO.h"
 #include "VBO.h"
-#include "EBO.h"
 
 class Chunk {
 public:
-	Chunk(int tileSize);
-	~Chunk();
+    Chunk(int tileSize);
+    ~Chunk();
 
-	void RenderChunk();
+    void RenderChunk();
 
 private:
-	int tileSize;
-	VAO VAO1;
-	VBO VBO1;
-	EBO EBO1;
-	unsigned int chunkXZ;
-	unsigned int chunkY;
-	unsigned int triangleCount;
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+    int tileSize;
+    VAO VAO1;
+    VBO VBO1;
+    EBO EBO1;
+    unsigned int chunkXZ;
+    unsigned int chunkY;
+    unsigned int triangleCount;
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
 
-	void GenerateChunk();
-	void GenerateFaces();
+    void GenerateChunk();
+    void GenerateFaces();
 };
-#endif //CHUNK_H
+#endif // CHUNK_H

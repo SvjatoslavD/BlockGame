@@ -26,7 +26,6 @@ set(HEADER_FILES
         header/EBO.h
         header/VAO.h
         header/VBO.h
-        header/gameVariables.h
         header/Texture.h
         header/Chunk.h
         header/Camera.h

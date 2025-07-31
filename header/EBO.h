@@ -5,19 +5,19 @@
 #ifndef EBO_H
 #define EBO_H
 
-#include <vector>
 #include <GL/glew.h>
+#include <vector>
 
 class EBO {
 public:
-	GLuint ID;
-	EBO();
-	EBO(std::vector<unsigned int>& indices);
+    GLuint ID;
+    EBO();
+    EBO(std::vector<unsigned int>& indices);
 
-	void SetData(std::vector <unsigned int>& indices);
-	void Bind();
-	void Unbind();
-	void Delete();
+    void SetData(std::vector<unsigned int>& indices);
+    void Bind();
+    void Unbind();
+    void Delete();
 };
 
-#endif //EBO_H
+#endif // EBO_H

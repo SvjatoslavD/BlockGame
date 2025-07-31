@@ -9,33 +9,35 @@
 #include <glm/ext/quaternion_trigonometric.hpp>
 
 Camera::Camera(int width, int height, glm::vec3 position, sf::Vector2i windowCenter) {
-	this->width = width;
-	this->height = height;
-	this->Position = position;
+    this->width = width;
+    this->height = height;
+    this->Position = position;
     this->windowCenter = windowCenter;
 }
 
-void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, const char *uniform) {
-	glm::mat4 view;
-	glm::mat4 projection;
+void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform) {
+    glm::mat4 view;
+    glm::mat4 projection;
 
     // model turns local coords into world coords (no change)
-	glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f);
 
     // turns world coords into 2d positions
-	view = glm::lookAt(Position,Position + Orientation, Up);
+    view = glm::lookAt(Position, Position + Orientation, Up);
 
     // defines how the points are seen on the screen
-	projection = glm::perspective(glm::radians(FOVdeg),(float)width/height, nearPlane, farPlane);
+    projection = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
 
     // pass all matrices to the shader
-	shader.setMat4(uniform, (projection * view * model));
+    shader.setMat4(uniform, (projection * view * model));
 }
 
-void Camera::Inputs(sf::Window &window,float deltaTime) {
+void Camera::Inputs(sf::Window& window, float deltaTime) {
     // handle events
     while (const std::optional event = window.pollEvent()) {
-        if (event->is<sf::Event::Closed>()) {window.close();}
+        if (event->is<sf::Event::Closed>()) {
+            window.close();
+        }
         if (const auto* resized = event->getIf<sf::Event::Resized>()) {
             // adjust the viewport when the window is resized
             glViewport(0, 0, resized->size.x, resized->size.y);
@@ -47,14 +49,14 @@ void Camera::Inputs(sf::Window &window,float deltaTime) {
                 float posY = static_cast<float>(mouseMoved->position.y);
 
                 if (firstMouse) {
-                    posX = window.getSize().x/2;
-                    posY = window.getSize().y/2;
+                    posX = window.getSize().x / 2;
+                    posY = window.getSize().y / 2;
                     firstMouse = false;
                 }
 
                 // some offsets - might be due to setting mouses position based on top - left coord
-                float xoffset = posX - window.getSize().x/2 + 8;
-                float yoffset = window.getSize().y/2 - 31 - posY; // reversed since y-coordinates go from bottom to top
+                float xoffset = posX - window.getSize().x / 2 + 8;
+                float yoffset = window.getSize().y / 2 - 31 - posY; // reversed since y-coordinates go from bottom to top
 
                 float sensitivity = 0.1f;
                 xoffset *= sensitivity;
@@ -64,8 +66,12 @@ void Camera::Inputs(sf::Window &window,float deltaTime) {
                 pitch += yoffset;
 
                 // make sure that when pitch is out of bounds, screen doesn't get flipped
-                if (pitch > 89.0f) pitch = 89.0f;
-                if (pitch < -89.0f) pitch = -89.0f;
+                if (pitch > 89.0f) {
+                    pitch = 89.0f;
+                };
+                if (pitch < -89.0f) {
+                    pitch = -89.0f;
+                };
 
                 glm::vec3 newOrientation;
                 newOrientation.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -119,5 +125,3 @@ void Camera::Inputs(sf::Window &window,float deltaTime) {
         window.close();
     }
 }
-
-

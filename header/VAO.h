@@ -6,17 +6,17 @@
 #define VAO_H
 
 #include <GL/glew.h>
-#include "VBO.h"
 #include "EBO.h"
+#include "VBO.h"
 
 class VAO {
 public:
-	GLuint ID;
-	VAO();
+    GLuint ID;
+    VAO();
 
-	void LinkAttrib(GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
-	void Bind();
-	void Unbind();
-	void Delete();
+    void LinkAttrib(GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
+    void Bind();
+    void Unbind();
+    void Delete();
 };
-#endif //VAO_H
+#endif // VAO_H

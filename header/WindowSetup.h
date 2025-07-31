@@ -9,10 +9,10 @@
 #include "GL/glew.h"
 
 class WindowSetup {
-    public:
+public:
     WindowSetup();
     ~WindowSetup();
     sf::Window start(int win_width, int win_height);
 };
 
-#endif //WINDOWSETUP_H
+#endif // WINDOWSETUP_H

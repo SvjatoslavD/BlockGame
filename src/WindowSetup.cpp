@@ -17,17 +17,17 @@ sf::Window WindowSetup::start(int win_width, int win_height) {
     settings.depthBits = 24;
 
     // create the window
-    sf::Window window(sf::VideoMode({(unsigned)win_width, (unsigned)win_height}), "OpenGL", sf::Style::Default, sf::State::Windowed, settings);
+    sf::Window window(sf::VideoMode({ (unsigned)win_width, (unsigned)win_height }), "OpenGL", sf::Style::Default, sf::State::Windowed, settings);
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
 
     // initialize the OpenGL states
     window.setActive();
-    glViewport(0,0,win_width,win_height);
+    glViewport(0, 0, win_width, win_height);
     glewExperimental = GL_TRUE;
     glewInit();
 
-    //set some openGl options
+    // set some openGl options
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
