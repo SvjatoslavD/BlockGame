@@ -10,8 +10,10 @@
 #include <vector>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Chunk::Chunk(unsigned int chunkSize) {
-	this->chunkSize = chunkSize;
+Chunk::Chunk(int tileSize) {
+	this->tileSize = tileSize;
+	this->chunkXZ = 16;
+	this->chunkY = 512;
 	GenerateChunk();
 	GenerateFaces();
 }
@@ -25,13 +27,13 @@ Chunk::~Chunk() {
 void Chunk::GenerateChunk() {
 	std::array<float, 6> indexOrderering = {0,1,2,2,3,0};
 
-	vertices.reserve(chunkSize * chunkSize * chunkSize);
+	vertices.reserve(chunkXZ * chunkY * chunkXZ);
 
 	float offset = 0.5f;
 	float vertexIndex = 0;
-	for (float x = 0; x < chunkSize; x++) {
-		for (float y = 0; y < chunkSize; y++) {
-			for (float z = 0; z < chunkSize; z++) {
+	for (float x = 0; x < chunkXZ; x++) {
+		for (float y = 0; y < chunkY; y++) {
+			for (float z = 0; z < chunkXZ; z++) {
 				// Top
 				vertices.emplace_back(Vertex(glm::vec3(x + offset, y + offset, z - offset),glm::vec2(0.f,1.f)));
 				vertices.emplace_back(Vertex(glm::vec3(x + offset, y + offset, z + offset),glm::vec2(0.f,0.f)));
@@ -107,7 +109,6 @@ void Chunk::GenerateFaces() {
 
 	VBO1.SetData(vertices);
 	EBO1.SetData(indices);
-
 
 	VBO1.Bind();
 	EBO1.Bind();

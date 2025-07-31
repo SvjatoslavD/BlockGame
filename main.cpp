@@ -27,7 +27,7 @@ int main() {
 
     Shader ourShader("../resources/shaders/default.vert", "../resources/shaders/default.frag");
 
-    Chunk ourChunk(10);
+    Chunk ourChunk(16);
 
     Texture grassTop("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0);
     Texture grassSides("../assets/images/tilemap.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 1, 0);
@@ -49,7 +49,7 @@ int main() {
         lastFrame = currentFrame;
 
         camera.Inputs(window, deltaTime);
-        camera.Matrix(45.0f,0.1f,100.f,ourShader,"cameraMatrix");
+        camera.Matrix(45.0f,0.1f,300.f,ourShader,"cameraMatrix");
 
         glClearColor(0.5f, 0.8f, 0.92f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -14,17 +14,18 @@
 
 class Chunk {
 public:
-	explicit Chunk(unsigned int chunkSize);
+	Chunk(int tileSize);
 	~Chunk();
 
 	void RenderChunk();
 
 private:
-	int tileSize = 16;
+	int tileSize;
 	VAO VAO1;
 	VBO VBO1;
 	EBO EBO1;
-	unsigned int chunkSize;
+	unsigned int chunkXZ;
+	unsigned int chunkY;
 	unsigned int triangleCount;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;

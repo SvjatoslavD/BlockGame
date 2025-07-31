@@ -30,6 +30,7 @@ set(HEADER_FILES
         header/Texture.h
         header/Chunk.h
         header/Camera.h
+        external/FastNoiseLite.h
 )
 
 add_executable(main ${HEADER_FILES} ${SOURCE_FILES} )
