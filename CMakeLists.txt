@@ -17,17 +17,19 @@ set(SOURCE_FILES
         src/VBO.cpp
         src/Texture.cpp
         src/Chunk.cpp
+        src/Camera.cpp
 )
 
 set(HEADER_FILES
-        include/Shader.h
-        include/windowSetup.h
-        include/EBO.h
-        include/VAO.h
-        include/VBO.h
-        include/gameVariables.h
-        include/Texture.h
-        include/Chunk.h
+        header/Shader.h
+        header/windowSetup.h
+        header/EBO.h
+        header/VAO.h
+        header/VBO.h
+        header/gameVariables.h
+        header/Texture.h
+        header/Chunk.h
+        header/Camera.h
 )
 
 add_executable(main ${HEADER_FILES} ${SOURCE_FILES} )

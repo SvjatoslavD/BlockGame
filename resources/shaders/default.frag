@@ -8,8 +8,7 @@ uniform sampler2D textureBottom;
 uniform sampler2D textureSides;
 uniform int drawnSide;
 
-void main()
-{
+void main() {
     switch (drawnSide) {
         case 0:
         FragColor = texture(textureTop, TexCoord);

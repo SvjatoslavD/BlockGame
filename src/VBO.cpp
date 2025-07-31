@@ -2,7 +2,7 @@
 // Created by svjat on 7/24/2025.
 //
 
-#include "../include/VBO.h"
+#include "../header/VBO.h"
 
 VBO::VBO(std::vector<Vertex>& vertices) {
 	glGenBuffers(1, &ID);

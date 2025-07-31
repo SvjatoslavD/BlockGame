@@ -2,7 +2,7 @@
 // Created by svjat on 6/12/2025.
 //
 
-#include "../include/Shader.h"
+#include "../header/Shader.h"
 
 #include "GL/glew.h"
 #include "glm/fwd.hpp"

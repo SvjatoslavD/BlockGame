@@ -2,7 +2,7 @@
 // Created by svjat on 7/24/2025.
 //
 
-#include "../include/EBO.h"
+#include "../header/EBO.h"
 
 EBO::EBO(std::vector<unsigned int>& indices) {
 	glGenBuffers(1, &ID);

@@ -2,7 +2,7 @@
 // Created by svjat on 7/25/2025.
 //
 
-#include"../include/Texture.h"
+#include"../header/Texture.h"
 
 Texture::Texture(const std::string& fileName, GLenum texType, GLenum slot, GLenum format, GLenum pixelType, int atlasX, int atlasY)
 {

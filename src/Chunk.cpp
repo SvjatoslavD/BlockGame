@@ -2,7 +2,7 @@
 // Created by svjat on 7/27/2025.
 //
 
-#include "../include/Chunk.h"
+#include "../header/Chunk.h"
 
 #include <array>
 #include <iostream>

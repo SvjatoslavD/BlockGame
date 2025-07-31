@@ -11,6 +11,7 @@
 class WindowSetup {
     public:
     WindowSetup();
+    ~WindowSetup();
     sf::Window start(int win_width, int win_height);
 };
 
