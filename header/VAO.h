@@ -6,8 +6,6 @@
 #define VAO_H
 
 #include <GL/glew.h>
-#include "EBO.h"
-#include "VBO.h"
 
 class VAO {
 public:

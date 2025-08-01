@@ -14,7 +14,9 @@ public:
     Camera(int width, int height, glm::vec3 position, sf::Vector2i window_center);
 
     void Matrix(float FOV_deg, float near_plane, float far_plane, Shader& shader, const char* uniform);
-    void Inputs(sf::Window& window, float delta_time);
+    void ModelMatrix(Shader &shader, const char *uniform, glm::vec3 offset);
+
+    void HandleInputs(sf::Window& window, float delta_time);
 private:
     glm::vec3 position_;
     glm::vec3 orientation_ = glm::vec3(0.0f, 0.0f, -1.0f);

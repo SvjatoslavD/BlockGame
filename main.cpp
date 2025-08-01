@@ -9,6 +9,7 @@
 #include "header/Shader.h"
 #include "header/Texture.h"
 #include "header/Window-Setup.h"
+#include "header/World.h"
 
 // ---- code is primarily modeled after code found on learnOpenGL.com and the code posted by Victor Gordan, but modified to be used within an SFML context ----
 
@@ -23,7 +24,7 @@ int main() {
 
     Shader ourShader("../resources/shaders/default.vert", "../resources/shaders/default.frag");
 
-    Chunk ourChunk(16);
+    World our_world{};
 
     Texture grassTop("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0);
     Texture grassSides("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 1, 0);
@@ -34,7 +35,7 @@ int main() {
     dirt.TexUnit(ourShader, "textureBottom", 2);
 
     sf::Vector2i windowCenter = (window.getPosition() + sf::Vector2i(window.getSize().x / 2, window.getSize().y / 2));
-    Camera camera(win_width, win_height, glm::vec3(0.f, 0.f, 20.f), windowCenter);
+    Camera camera(win_width, win_height, glm::vec3(0.f, 520.f, 20.f), windowCenter);
 
     sf::Clock clock;
     float lastFrame = 0.0f;
@@ -44,8 +45,8 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        camera.Inputs(window, deltaTime);
-        camera.Matrix(45.0f, 0.1f, 300.f, ourShader, "cameraMatrix");
+        camera.HandleInputs(window, deltaTime);
+        camera.Matrix(45.0f, 0.1f, 100.f, ourShader, "cameraMatrix");
 
         glClearColor(0.5f, 0.8f, 0.92f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -54,7 +55,7 @@ int main() {
         ourShader.setInt("drawnSide", 2);
         glActiveTexture(GL_TEXTURE1);
         grassSides.Bind();
-        ourChunk.RenderChunk();
+        our_world.RenderChunks(ourShader, camera);
 
         window.display();
     }

@@ -16,28 +16,30 @@ struct CubeData;
 
 class Chunk {
 public:
-    explicit Chunk(int tileSize);
+    explicit Chunk(std::vector<CubeData> cube_data);
     ~Chunk();
 
+    std::vector<CubeData>* getCubeData();
     void RenderChunk();
 
 private:
-    int tile_size_;
     VAO VAO1_;
     VBO VBO1_;
     EBO EBO1_;
 
-    unsigned int chunk_xz_size_;
-    unsigned int chunk_y_size_;
+    unsigned int k_chunk_size_x_ = 16;
+    unsigned int k_chunk_size_y_ = 512;
+    unsigned int k_chunk_size_z_ = 16;
 
-    std::vector<CubeData> cube_locations_;
-    std::vector<Vertex> vertices_;
-    std::vector<unsigned int> indices_;
+    int indices_size = 0;
 
-    void GenerateChunkData();
-    void GenerateChunk();
+    std::vector<CubeData> cube_data_;
+    std::vector<unsigned int> indices;
+
     void GenerateFaces();
-    float CalculateIndex(float x, float y, float z) const;
+    void BindVAOAttributes(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+    std::vector<unsigned int> AddIndices(unsigned int face_count);
+    int CalculateIndex(int x, int y, int z) const;
 };
 
 struct CubeData {

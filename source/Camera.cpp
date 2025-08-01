@@ -15,24 +15,29 @@ Camera::Camera(int width, int height, glm::vec3 position, sf::Vector2i window_ce
     this->window_center_ = window_center;
 }
 
-void Camera::Matrix(float FOV_deg, float near_plane, float far_plane, Shader& shader, const char* uniform) {
+void Camera::Matrix(float FOV_deg, float near_plane, float far_plane, Shader &shader, const char *uniform) {
     glm::mat4 view;
     glm::mat4 projection;
 
-    // model turns local coords into world coords (no change)
-    glm::mat4 model = glm::mat4(1.0f);
-
     // turns world coords into 2d positions
     view = glm::lookAt(position_, position_ + orientation_, up_);
-
     // defines how the points are seen on the screen
     projection = glm::perspective(glm::radians(FOV_deg), (float)width_ / height_, near_plane, far_plane);
 
     // pass all matrices to the shader
-    shader.setMat4(uniform, (projection * view * model));
+    glm::mat4 cameraMatrix = projection * view;
+    shader.setMat4(uniform, cameraMatrix);
 }
 
-void Camera::Inputs(sf::Window& window, float delta_time) {
+void Camera::ModelMatrix(Shader &shader, const char *uniform, glm::vec3 offset) {
+    // model turns local coords into world coords (no change)
+    glm::mat4 model = glm::translate(glm::mat4(1.0f),offset);
+
+    shader.setMat4(uniform, model);
+    glm::vec4 test = model * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+void Camera::HandleInputs(sf::Window& window, float delta_time) {
     // handle events
     while (const std::optional event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) {

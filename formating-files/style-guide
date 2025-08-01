@@ -9,7 +9,7 @@ functions : pascal case
 functions (accessors) : camel case
 
 enum members : same as constants
-constants : leading k with camel case following
+constants : leading k with snake case following
 
 variables : snake case
 private class members: snake case with a trailing underscore

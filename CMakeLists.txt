@@ -18,6 +18,7 @@ set(SOURCE_FILES
         source/texture.cpp
         source/chunk.cpp
         source/camera.cpp
+        source/World.cpp
 )
 
 set(HEADER_FILES
@@ -29,6 +30,7 @@ set(HEADER_FILES
         header/texture.h
         header/chunk.h
         header/camera.h
+        header/World.h
 )
 
 set(EXTERNAL_LIBRARIES

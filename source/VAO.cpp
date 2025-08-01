@@ -4,12 +4,16 @@
 
 #include "../header/VAO.h"
 
-VAO::VAO() { glGenVertexArrays(1, &ID); }
+#include <iostream>
+
+VAO::VAO() {
+    glGenVertexArrays(1, &ID);
+}
 
 void VAO::LinkAttrib(GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset) {
     Bind();
-    glEnableVertexAttribArray(layout);
     glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
+    glEnableVertexAttribArray(layout);
 }
 
 void VAO::Bind() { glBindVertexArray(ID); }
