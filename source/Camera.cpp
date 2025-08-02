@@ -106,7 +106,7 @@ void Camera::HandleInputs(sf::Window& window, float delta_time) {
     }
 
     // process input
-    float cameraSpeed = 6.f * delta_time;
+    float cameraSpeed = 15.f * delta_time;
 
     if (isKeyPressed(sf::Keyboard::Key::W)) {
         position_ += cameraSpeed * orientation_;
@@ -121,12 +121,19 @@ void Camera::HandleInputs(sf::Window& window, float delta_time) {
         position_ += glm::normalize(glm::cross(orientation_, up_)) * cameraSpeed;
     }
     if (isKeyPressed(sf::Keyboard::Key::Space)) {
-        position_ += up_ * cameraSpeed;
+        position_ += up_ * (cameraSpeed/2);
     }
     if (isKeyPressed(sf::Keyboard::Key::LShift)) {
-        position_ -= up_ * cameraSpeed;
+        position_ -= up_ * (cameraSpeed/2);
     }
     if (isKeyPressed(sf::Keyboard::Key::Q)) {
         window.close();
     }
+
+    // After finishing moving the player
+    CalculateChunkCoordinates();
+}
+
+void Camera::CalculateChunkCoordinates() {
+    chunk_coordinates_ = glm::vec2(floor(position_.x/16),floor(position_.z/16));
 }

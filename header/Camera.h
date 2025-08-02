@@ -17,14 +17,16 @@ public:
     void ModelMatrix(Shader &shader, const char *uniform, glm::vec3 offset);
 
     void HandleInputs(sf::Window& window, float delta_time);
+    void CalculateChunkCoordinates();
+    glm::vec2 getChunkCoordinates() {return chunk_coordinates_;}
 private:
     glm::vec3 position_;
-    glm::vec3 orientation_ = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::ivec2 chunk_coordinates_;
+    glm::vec3 orientation_ = glm::vec3(0.0f, 0.0f, 1.0f);
     glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
 
     int width_, height_;
 
-    float speed_ = 1.0f;
     float sensitivity_ = 100.0f;
     bool first_mouse_ = true;
     float yaw_ = -90.0f;
