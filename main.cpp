@@ -2,7 +2,6 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Window.hpp>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "core/Camera.h"
 #include "core/opengl/Shader.h"

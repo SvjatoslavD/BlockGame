@@ -29,6 +29,9 @@ set(SOURCE
         core/Camera.h
         core/World.h
         external/FastNoiseLite.h
+        core/application/GameManager.cpp
+        core/application/GameManager.h
+        core/states/GameState.h
 )
 
 add_executable(main ${SOURCE})
