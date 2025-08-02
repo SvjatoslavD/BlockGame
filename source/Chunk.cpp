@@ -6,13 +6,10 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <array>
-#include <iostream>
-#include <ostream>
-#include <utility>
 #include <vector>
 
-Chunk::Chunk(std::vector<CubeData> cube_data) : cube_data_(cube_data) {
-    GenerateFaces();
+Chunk::Chunk(std::vector<CubeData> cube_data, World& world, glm::vec2 chunk_coords) : cube_data_(cube_data), chunk_coords_(chunk_coords) {
+    GenerateFaces(world);
 }
 
 Chunk::~Chunk() {
@@ -22,18 +19,42 @@ Chunk::~Chunk() {
     cube_data_.clear();
 }
 
-void Chunk::GenerateFaces() {
+void Chunk::GenerateFaces(World& world) {
     std::vector<Vertex> vertices;
+
+    int chunk_x = chunk_coords_.x;
+    int chunk_z = chunk_coords_.y;
+
+    std::vector<CubeData> face;
 
     unsigned int mesh_face_count = 0;
     // Cubes are drawn off their center positions
     // If I want to change offset, I would need to rewrite the code so the points are relative to some corner
     float cube_offset = .5f;
 
-    for (int x = 0; x < k_chunk_size_x_; x++) {
-        for (int y = 0; y < k_chunk_size_y_; y++) {
-            for (int z = 0; z < k_chunk_size_z_; z++) {
+    std::string key_back = std::to_string(chunk_x) + "," + std::to_string(chunk_z - 1);
+    std::vector<CubeData>* chunk_back;
+    if (world.ChunkExists(key_back)) { chunk_back = &world.getChunkData(key_back); }
+    else { chunk_back = nullptr;}
 
+    std::string key_front = std::to_string(chunk_x) + "," + std::to_string(chunk_z + 1);
+    std::vector<CubeData>* chunk_front;
+    if (world.ChunkExists(key_front)) { chunk_front = &world.getChunkData(key_front); }
+    else { chunk_front = nullptr;}
+
+    std::string key_left = std::to_string(chunk_x - 1) + "," + std::to_string(chunk_z);
+    std::vector<CubeData>* chunk_left;
+    if (world.ChunkExists(key_left)) { chunk_left = &world.getChunkData(key_left); }
+    else { chunk_left = nullptr;}
+
+    std::string key_right = std::to_string(chunk_x + 1) + "," + std::to_string(chunk_z);
+    std::vector<CubeData>* chunk_right;
+    if (world.ChunkExists(key_right)) { chunk_right = &world.getChunkData(key_right); }
+    else { chunk_right = nullptr;}
+
+    for (int x = 0; x < k_chunk_size_x_; x++) {
+        for (int z = 0; z < k_chunk_size_z_; z++) {
+            for (int y = 0; y < k_chunk_size_y_; y++) {
                 int current_cube = CalculateIndex(x, y, z);
                 if (cube_data_[current_cube].is_air) {
                     continue;
@@ -52,7 +73,7 @@ void Chunk::GenerateFaces() {
 
                 // Bottom
                 int cube_below = CalculateIndex(x, y - 1, z);
-                if (y <= 0 || cube_data_[cube_below].is_air) {
+                if (y - 1 < 0 || cube_data_[cube_below].is_air) {
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z - cube_offset), glm::vec2(1.f, 1.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z + cube_offset), glm::vec2(1.f, 0.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z + cube_offset), glm::vec2(0.f, 0.f)));
@@ -61,9 +82,27 @@ void Chunk::GenerateFaces() {
                     mesh_face_count++;
                 }
 
+                // need to check neighboring chunks
+
                 // Back
-                int cube_back = CalculateIndex(x, y, z - 1);
-                if (z <= 0 || cube_data_[cube_back].is_air) {
+                bool draw_back_face = false;
+
+                if (z == 0) {
+                    int index = CalculateIndex(x, y, k_chunk_size_z_-1);
+                    if (chunk_back != nullptr) {
+                        if (chunk_back->operator[](index).is_air) {
+                            draw_back_face = true;
+                        }
+                    }
+                }
+                else {
+                    int cube_back = CalculateIndex(x, y, z - 1);
+                    if (cube_data_[cube_back].is_air) {
+                        draw_back_face = true;
+                    }
+                }
+
+                if (draw_back_face) {
                     vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z - cube_offset), glm::vec2(1.f, 0.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z - cube_offset), glm::vec2(1.f, 1.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z - cube_offset), glm::vec2(0.f, 1.f)));
@@ -73,8 +112,24 @@ void Chunk::GenerateFaces() {
                 }
 
                 // Front
-                int cube_front = CalculateIndex(x, y, z + 1);
-                if (z + 1 >= k_chunk_size_z_ || cube_data_[cube_front].is_air) {
+                bool draw_front_face = false;
+
+                if (z == k_chunk_size_z_ - 1) {
+                    if (chunk_front != nullptr) {
+                        int index = CalculateIndex(x, y, 0);
+                        if (chunk_front->operator[](index).is_air) {
+                            draw_front_face = true;
+                        }
+                    }
+                }
+                else {
+                    int cube_front = CalculateIndex(x, y, z + 1);
+                    if (cube_data_[cube_front].is_air) {
+                        draw_front_face = true;
+                    }
+                }
+
+                if (draw_front_face) {
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z + cube_offset), glm::vec2(1.f, 0.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z + cube_offset), glm::vec2(1.f, 1.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z + cube_offset), glm::vec2(0.f, 1.f)));
@@ -84,8 +139,24 @@ void Chunk::GenerateFaces() {
                 }
 
                 // Left
-                int cube_left = CalculateIndex(x - 1, y, z);
-                if (x <= 0 || cube_data_[cube_left].is_air) {
+                bool draw_left_face = false;
+
+                if (x == 0) {
+                    if (chunk_left != nullptr) {
+                        int index = CalculateIndex(k_chunk_size_x_ - 1, y, z);
+                        if (chunk_left->operator[](index).is_air) {
+                            draw_left_face = true;
+                        }
+                    }
+                }
+                else {
+                    int cube_left = CalculateIndex(x - 1, y, z);
+                    if (cube_data_[cube_left].is_air) {
+                        draw_left_face = true;
+                    }
+                }
+
+                if (draw_left_face) {
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z + cube_offset), glm::vec2(0.f, 1.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z + cube_offset), glm::vec2(0.f, 0.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z - cube_offset), glm::vec2(1.f, 0.f)));
@@ -95,8 +166,24 @@ void Chunk::GenerateFaces() {
                 }
 
                 // Right
-                int cube_right = CalculateIndex(x + 1, y, z);
-                if (x + 1 >= k_chunk_size_x_ || cube_data_[cube_right].is_air) {
+                bool draw_right_face = false;
+
+                if (x == (k_chunk_size_x_ - 1)) {
+                    if (chunk_right != nullptr) {
+                        int index = CalculateIndex(0, y, z);
+                        if (chunk_right->operator[](index).is_air) {
+                            draw_right_face = true;
+                        }
+                    }
+                }
+                else {
+                    int cube_right = CalculateIndex(x + 1, y, z);
+                    if (cube_data_[cube_right].is_air) {
+                        draw_right_face = true;
+                    }
+                }
+
+                if (draw_right_face) {
                     vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z - cube_offset), glm::vec2(0.f, 1.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z - cube_offset), glm::vec2(0.f, 0.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z + cube_offset), glm::vec2(1.f, 0.f)));
@@ -136,7 +223,7 @@ void Chunk::RenderChunk() {
 
 int Chunk::CalculateIndex(int x, int y, int z) const {
     // Every iteration of y is equal to 1 iteration of ChunkZSize_, same for x and ChunkYSize_
-    return (x * k_chunk_size_y_) + (y * k_chunk_size_z_ ) + (z);
+    return (x * k_chunk_size_z_ * k_chunk_size_y_) + (z * k_chunk_size_y_ ) + (y);
 }
 
 std::vector<unsigned int> Chunk::AddIndices(unsigned int face_count) {
@@ -156,6 +243,6 @@ std::vector<unsigned int> Chunk::AddIndices(unsigned int face_count) {
     return indices;
 }
 
-std::vector<CubeData>* Chunk::getCubeData() {
-    return &cube_data_;
+std::vector<CubeData>& Chunk::getCubeData() {
+    return cube_data_;
 }

@@ -26,16 +26,12 @@ int main() {
 
     World our_world{};
 
-    Texture grassTop("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0);
-    Texture grassSides("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 1, 0);
-    Texture dirt("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
+    Texture test("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 4, 4);
 
-    grassTop.TexUnit(ourShader, "textureTop", 0);
-    grassSides.TexUnit(ourShader, "textureSides", 1);
-    dirt.TexUnit(ourShader, "textureBottom", 2);
+    test.TexUnit(ourShader, "textureTop", 0);
 
     sf::Vector2i windowCenter = (window.getPosition() + sf::Vector2i(window.getSize().x / 2, window.getSize().y / 2));
-    Camera camera(win_width, win_height, glm::vec3(0.f, 520.f, 0.f), windowCenter);
+    Camera camera(win_width, win_height, glm::vec3(0.f, 200.f, 0.f), windowCenter);
 
     sf::Clock clock;
     float lastFrame = 0.0f;
@@ -46,15 +42,14 @@ int main() {
         lastFrame = currentFrame;
 
         camera.HandleInputs(window, deltaTime);
-        camera.Matrix(45.0f, 0.1f, 200.f, ourShader, "cameraMatrix");
+        camera.Matrix(50.0f, 0.1f, 300.f, ourShader, "cameraMatrix");
 
         glClearColor(0.5f, 0.8f, 0.92f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         ourShader.Activate();
-        ourShader.setInt("drawnSide", 2);
-        glActiveTexture(GL_TEXTURE1);
-        grassSides.Bind();
+        glActiveTexture(GL_TEXTURE0);
+        test.Bind();
         our_world.Update(camera.getChunkCoordinates());
         our_world.RenderChunks(ourShader, camera);
 

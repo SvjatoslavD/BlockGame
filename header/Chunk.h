@@ -8,24 +8,30 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <vector>
+
+#include "World.h"
 #include "EBO.h"
 #include "VAO.h"
 #include "VBO.h"
+
+class World;
 
 struct CubeData;
 
 class Chunk {
 public:
-    explicit Chunk(std::vector<CubeData> cube_data);
+    Chunk(std::vector<CubeData> cube_data, World& world,glm::vec2 chunk_coords);
     ~Chunk();
 
-    std::vector<CubeData>* getCubeData();
+    std::vector<CubeData>& getCubeData();
     void RenderChunk();
 
 private:
     VAO VAO1_;
     VBO VBO1_;
     EBO EBO1_;
+
+    glm::vec2 chunk_coords_;
 
     unsigned int k_chunk_size_x_ = 16;
     unsigned int k_chunk_size_y_ = 512;
@@ -36,7 +42,7 @@ private:
     std::vector<CubeData> cube_data_;
     std::vector<unsigned int> indices;
 
-    void GenerateFaces();
+    void GenerateFaces(World& world);
     void BindVAOAttributes(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
     std::vector<unsigned int> AddIndices(unsigned int face_count);
     int CalculateIndex(int x, int y, int z) const;

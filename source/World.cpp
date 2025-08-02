@@ -3,12 +3,13 @@
 //
 
 #include "../header/World.h"
+#include "../header/Chunk.h"
 
 World::World() {
 	// load starting chunks into queue
 	for (int x = -render_distance_; x <= render_distance_; x++) {
 		for (int z = -render_distance_; z <= render_distance_; z++) {
-			std::string key = std::to_string(x) + "_" + std::to_string(z);
+			std::string key = std::to_string(x) + "," + std::to_string(z);
 			GenerateChunk(key);
 		}
 	}
@@ -19,7 +20,7 @@ World::~World() {
 }
 
 void World::Update(glm::vec2 player_chunk_coords) {
-	if (player_chunk_coords != center_chunk_coords) {
+	if (player_chunk_coords != center_chunk_coords && !pause_chunk_loading) {
 		glm::ivec2 difference = player_chunk_coords - center_chunk_coords;
 
 		// player z changed
@@ -86,18 +87,26 @@ void World::RenderChunks(Shader& shader, Camera& camera) {
 	}
 }
 
-std::vector<CubeData> World::GenerateChunkData() {
-	std::vector <CubeData> cube_data_vec;
+std::vector<CubeData> World::GenerateChunkData(std::string key) {
+	std::vector<CubeData> cube_data_vec;
 	cube_data_vec.reserve(k_chunk_size_x_*k_chunk_size_y_*k_chunk_size_z_);
 
+	FastNoiseLite terrain_noise;
+	terrain_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	terrain_noise.SetFrequency(0.01f);
+	terrain_noise.SetSeed(0);
+
+	glm::vec2 chunk_coords = ReadStringKey(key);
+
 	for (int x = 0; x < k_chunk_size_x_; x++) {
-		for (int y = 0; y < k_chunk_size_y_; y++) {
-			for (int z = 0; z < k_chunk_size_z_; z++) {
+		for (int z = 0; z < k_chunk_size_z_; z++) {
+			float terrain_noise_val = terrain_noise.GetNoise(chunk_coords.x * 16 + x, chunk_coords.y * 16 + z);
+			int height = static_cast<int>((terrain_noise_val + 1.0f) * 0.5f * (k_chunk_size_y_/64) + k_chunk_size_y_/4);
+
+			for (int y = 0; y < k_chunk_size_y_; y++) {
 				CubeData cube_data{};
-				// cube_data.is_air = true;
-				cube_data.is_air = false;
-				// if ((x + y + z) % 2 == 0) { cube_data.is_air = true; }
-				// else { cube_data.is_air = false; }
+				if (y < height) {cube_data.is_air = false;}
+				else {cube_data.is_air = true;}
 				cube_data.position = glm::vec3(x, y, z);
 				cube_data_vec.emplace_back(cube_data);
 			}
@@ -109,9 +118,25 @@ std::vector<CubeData> World::GenerateChunkData() {
 
 void World::GenerateChunk(std::string key) {
 	if (chunks_.find(key) == chunks_.end()) {
-		std::vector<CubeData> data = GenerateChunkData();
-		auto chunk = std::make_unique<Chunk>(data);
+		std::vector<CubeData> data = GenerateChunkData(key);
+		auto chunk = std::make_unique<Chunk>(data, *this, ReadStringKey(key));
 		chunks_.emplace(key, std::move(chunk));
 	}
+}
+
+bool World::ChunkExists(std::string key) {
+	return chunks_.find(key) != chunks_.end();
+}
+
+std::vector<CubeData>& World::getChunkData(std::string key) {
+	return chunks_.operator[](key)->getCubeData();
+}
+
+glm::vec2 World::ReadStringKey(std::string key) {
+	glm::vec2 out = glm::vec2(0);
+	char comma;
+	std::stringstream ss(key);
+	ss >> out.x >> comma >> out.y;
+	return out;
 }
 

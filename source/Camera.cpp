@@ -106,7 +106,11 @@ void Camera::HandleInputs(sf::Window& window, float delta_time) {
     }
 
     // process input
-    float cameraSpeed = 15.f * delta_time;
+    float cameraSpeed = 60.f * delta_time;
+
+    if (isKeyPressed(sf::Keyboard::Key::LControl)) {
+        cameraSpeed /= 4.f;
+    }
 
     if (isKeyPressed(sf::Keyboard::Key::W)) {
         position_ += cameraSpeed * orientation_;
