@@ -2,7 +2,7 @@
 // Created by svjat on 7/23/2025.
 //
 
-#include "../header/Window-Setup.h"
+#include "Window-Setup.h"
 
 #include <iostream>
 

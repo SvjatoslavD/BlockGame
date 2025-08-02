@@ -2,7 +2,7 @@
 // Created by svjat on 7/24/2025.
 //
 
-#include "../header/VBO.h"
+#include "VBO.h"
 
 VBO::VBO() {
     glGenBuffers(1, &ID);

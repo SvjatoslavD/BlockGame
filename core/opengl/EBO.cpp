@@ -2,7 +2,7 @@
 // Created by svjat on 7/24/2025.
 //
 
-#include "../header/EBO.h"
+#include "EBO.h"
 
 EBO::EBO() {
     glGenBuffers(1, &ID);

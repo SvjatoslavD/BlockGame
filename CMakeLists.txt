@@ -8,36 +8,30 @@ find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRE
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
-set(SOURCE_FILES
+set(SOURCE
         main.cpp
-        source/shader.cpp
-        source/Window-Setup.cpp
-        source/EBO.cpp
-        source/VAO.cpp
-        source/VBO.cpp
-        source/texture.cpp
-        source/chunk.cpp
-        source/camera.cpp
-        source/World.cpp
+        core/opengl/Shader.cpp
+        core/Window-Setup.cpp
+        core/opengl/EBO.cpp
+        core/opengl/VAO.cpp
+        core/opengl/VBO.cpp
+        core/opengl/Texture.cpp
+        core/Chunk.cpp
+        core/Camera.cpp
+        core/World.cpp
+        core/opengl/Shader.h
+        core/Window-Setup.h
+        core/opengl/EBO.h
+        core/opengl/VAO.h
+        core/opengl/VBO.h
+        core/opengl/Texture.h
+        core/Chunk.h
+        core/Camera.h
+        core/World.h
+        external/FastNoiseLite.h
 )
 
-set(HEADER_FILES
-        header/shader.h
-        header/Window-Setup.h
-        header/EBO.h
-        header/VAO.h
-        header/VBO.h
-        header/texture.h
-        header/chunk.h
-        header/camera.h
-        header/World.h
-)
-
-set(EXTERNAL_LIBRARIES
-    external/FastNoiseLite.h
-)
-
-add_executable(main ${HEADER_FILES} ${SOURCE_FILES} ${EXTERNAL_LIBRARIES})
+add_executable(main ${SOURCE})
 
 target_link_libraries(main PRIVATE
         GLEW::GLEW

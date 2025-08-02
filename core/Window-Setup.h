@@ -6,7 +6,7 @@
 #define WINDOWSETUP_H
 
 #include <SFML/Window.hpp>
-#include "GL/glew.h"
+#include <GL/glew.h>
 
 class WindowSetup {
 public:

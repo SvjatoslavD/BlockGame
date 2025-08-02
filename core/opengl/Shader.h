@@ -5,7 +5,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <GL/glew.h> // include glad to get all the required OpenGL headers
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 
 #include <fstream>
@@ -17,7 +17,7 @@
 class Shader {
 public:
     // the program ID
-    unsigned int ID;
+    GLuint ID;
 
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);

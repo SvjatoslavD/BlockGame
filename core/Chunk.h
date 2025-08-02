@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "World.h"
-#include "EBO.h"
-#include "VAO.h"
-#include "VBO.h"
+#include "opengl/EBO.h"
+#include "opengl/VAO.h"
+#include "opengl/VBO.h"
 
 class World;
 

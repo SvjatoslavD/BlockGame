@@ -4,12 +4,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "header/Camera.h"
-#include "header/Chunk.h"
-#include "header/Shader.h"
-#include "header/Texture.h"
-#include "header/Window-Setup.h"
-#include "header/World.h"
+#include "core/Camera.h"
+#include "core/opengl/Shader.h"
+#include "core/opengl/Texture.h"
+#include "core/Window-Setup.h"
+#include "core/World.h"
 
 // ---- code is primarily modeled after code found on learnOpenGL.com and the code posted by Victor Gordan, but modified to be used within an SFML context ----
 

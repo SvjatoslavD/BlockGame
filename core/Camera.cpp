@@ -2,11 +2,8 @@
 // Created by svjat on 7/30/2025.
 //
 
-#include "../header/Camera.h"
+#include "Camera.h"
 
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/ext/quaternion_trigonometric.hpp>
 
 Camera::Camera(int width, int height, glm::vec3 position, sf::Vector2i window_center) {
     this->width_ = width;

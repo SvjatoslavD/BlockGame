@@ -6,8 +6,9 @@
 #define CAMERA_H
 #include <SFML/Window/Window.hpp>
 #include <glm/vec3.hpp>
+#include <glm/ext.hpp>
 
-#include "Shader.h"
+#include "opengl/Shader.h"
 
 class Camera {
 public:

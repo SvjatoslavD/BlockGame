@@ -2,8 +2,8 @@
 // Created by svjat on 8/1/2025.
 //
 
-#include "../header/World.h"
-#include "../header/Chunk.h"
+#include "World.h"
+#include "Chunk.h"
 
 World::World() {
 	// load starting chunks into queue

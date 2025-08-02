@@ -2,9 +2,7 @@
 // Created by svjat on 7/24/2025.
 //
 
-#include "../header/VAO.h"
-
-#include <iostream>
+#include "VAO.h"
 
 VAO::VAO() {
     glGenVertexArrays(1, &ID);

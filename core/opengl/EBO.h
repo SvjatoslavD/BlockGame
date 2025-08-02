@@ -12,7 +12,6 @@ class EBO {
 public:
     GLuint ID;
     EBO();
-    explicit EBO(std::vector<unsigned int>& indices);
 
     void SetData(std::vector<unsigned int>& indices);
     void Bind();

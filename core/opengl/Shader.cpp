@@ -2,9 +2,8 @@
 // Created by svjat on 6/12/2025.
 //
 
-#include "../header/Shader.h"
+#include "Shader.h"
 
-#include "GL/glew.h"
 #include "glm/fwd.hpp"
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {

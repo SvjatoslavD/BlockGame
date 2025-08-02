@@ -2,7 +2,7 @@
 // Created by svjat on 7/27/2025.
 //
 
-#include "../header/Chunk.h"
+#include "Chunk.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <array>
@@ -73,7 +73,8 @@ void Chunk::GenerateFaces(World& world) {
 
                 // Bottom
                 int cube_below = CalculateIndex(x, y - 1, z);
-                if (y - 1 < 0 || cube_data_[cube_below].is_air) {
+                // Make sure we don't render faces below the chunk
+                if (y != 0 && cube_data_[cube_below].is_air) {
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z - cube_offset), glm::vec2(1.f, 1.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z + cube_offset), glm::vec2(1.f, 0.f)));
                     vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z + cube_offset), glm::vec2(0.f, 0.f)));
