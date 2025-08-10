@@ -27,9 +27,8 @@ void Chunk::GenerateFaces(World& world) {
     std::vector<CubeData> face;
 
     unsigned int mesh_face_count = 0;
-    // Cubes are drawn off their center positions
-    // If I want to change offset, I would need to rewrite the code so the points are relative to some corner
-    float cube_offset = .5f;
+    // Cubes are drawn off their back, bottom left corner
+    int cube_offset = 1;
 
     glm::ivec2 key_back = glm::ivec2(chunk_x, chunk_z - 1);
     std::vector<CubeData>* chunk_back;
@@ -60,24 +59,24 @@ void Chunk::GenerateFaces(World& world) {
                 }
 
                 // Top
-                int cube_above = CalculateIndex(x, y + 1, z);
+                int cube_above = CalculateIndex(x, y + cube_offset, z);
                 if (y + 1 >= k_chunk_size_y_ || cube_data_[cube_above].is_air) {
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z - cube_offset), glm::vec2(0.f, 1.f),glm::vec2(0.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z + cube_offset), glm::vec2(0.f, 0.f),glm::vec2(0.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z + cube_offset), glm::vec2(1.f, 0.f),glm::vec2(0.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z - cube_offset), glm::vec2(1.f, 1.f),glm::vec2(0.f,0.f)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z), glm::vec2(0, 1),glm::vec2(0,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z + cube_offset), glm::vec2(0, 0),glm::vec2(0,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x, y + cube_offset, z + cube_offset), glm::vec2(1, 0),glm::vec2(0,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x, y + cube_offset, z), glm::vec2(1, 1),glm::vec2(0,0)));
 
                     mesh_face_count++;
                 }
 
                 // Bottom
-                int cube_below = CalculateIndex(x, y - 1, z);
-                // Make sure we don't render faces below the chunk
+                int cube_below = CalculateIndex(x, y - cube_offset, z);
+                // Make sure we don't render faces below the chunk for now
                 if (y != 0 && cube_data_[cube_below].is_air) {
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z - cube_offset), glm::vec2(1.f, 1.f),glm::vec2(0.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z + cube_offset), glm::vec2(1.f, 0.f),glm::vec2(0.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z + cube_offset), glm::vec2(0.f, 0.f),glm::vec2(0.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z - cube_offset), glm::vec2(0.f, 1.f),glm::vec2(0.f,0.f)));
+                    vertices.emplace_back(Vertex(glm::vec3(x, y, z), glm::vec2(1, 1),glm::vec2(0,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x, y, z + cube_offset), glm::vec2(1, 0),glm::vec2(0,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y, z + cube_offset), glm::vec2(0, 0),glm::vec2(0,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y, z), glm::vec2(0, 1),glm::vec2(0,0)));
 
                     mesh_face_count++;
                 }
@@ -88,7 +87,7 @@ void Chunk::GenerateFaces(World& world) {
                 bool draw_back_face = false;
 
                 if (z == 0) {
-                    int index = CalculateIndex(x, y, k_chunk_size_z_-1);
+                    int index = CalculateIndex(x, y, k_chunk_size_z_-cube_offset);
                     if (chunk_back != nullptr) {
                         if (chunk_back->operator[](index).is_air) {
                             draw_back_face = true;
@@ -96,17 +95,17 @@ void Chunk::GenerateFaces(World& world) {
                     }
                 }
                 else {
-                    int cube_back = CalculateIndex(x, y, z - 1);
+                    int cube_back = CalculateIndex(x, y, z - cube_offset);
                     if (cube_data_[cube_back].is_air) {
                         draw_back_face = true;
                     }
                 }
 
                 if (draw_back_face) {
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z - cube_offset), glm::vec2(1.f, 0.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z - cube_offset), glm::vec2(1.f, 1.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z - cube_offset), glm::vec2(0.f, 1.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z - cube_offset), glm::vec2(0.f, 0.f),glm::vec2(1.f,0.f)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y , z ), glm::vec2(1, 0),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z ), glm::vec2(1, 1),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x , y + cube_offset, z ), glm::vec2(0, 1),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x , y , z ), glm::vec2(0, 0),glm::vec2(1,0)));
 
                     mesh_face_count++;
                 }
@@ -123,17 +122,17 @@ void Chunk::GenerateFaces(World& world) {
                     }
                 }
                 else {
-                    int cube_front = CalculateIndex(x, y, z + 1);
+                    int cube_front = CalculateIndex(x, y, z + cube_offset);
                     if (cube_data_[cube_front].is_air) {
                         draw_front_face = true;
                     }
                 }
 
                 if (draw_front_face) {
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z + cube_offset), glm::vec2(1.f, 0.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z + cube_offset), glm::vec2(1.f, 1.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z + cube_offset), glm::vec2(0.f, 1.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z + cube_offset), glm::vec2(0.f, 0.f),glm::vec2(1.f,0.f)));
+                    vertices.emplace_back(Vertex(glm::vec3(x , y , z + cube_offset), glm::vec2(1, 0),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x , y + cube_offset, z + cube_offset), glm::vec2(1, 1),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z + cube_offset), glm::vec2(0, 1),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y , z + cube_offset), glm::vec2(0, 0),glm::vec2(1,0)));
 
                     mesh_face_count++;
                 }
@@ -143,24 +142,24 @@ void Chunk::GenerateFaces(World& world) {
 
                 if (x == 0) {
                     if (chunk_left != nullptr) {
-                        int index = CalculateIndex(k_chunk_size_x_ - 1, y, z);
+                        int index = CalculateIndex(k_chunk_size_x_ - cube_offset, y, z);
                         if (chunk_left->operator[](index).is_air) {
                             draw_left_face = true;
                         }
                     }
                 }
                 else {
-                    int cube_left = CalculateIndex(x - 1, y, z);
+                    int cube_left = CalculateIndex(x - cube_offset, y, z);
                     if (cube_data_[cube_left].is_air) {
                         draw_left_face = true;
                     }
                 }
 
                 if (draw_left_face) {
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z + cube_offset), glm::vec2(0.f, 1.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z + cube_offset), glm::vec2(0.f, 0.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y - cube_offset, z - cube_offset), glm::vec2(1.f, 0.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x - cube_offset, y + cube_offset, z - cube_offset), glm::vec2(1.f, 1.f),glm::vec2(1.f,0.f)));
+                    vertices.emplace_back(Vertex(glm::vec3(x , y + cube_offset, z + cube_offset), glm::vec2(0, 1),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x , y , z + cube_offset), glm::vec2(0, 0),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x , y , z ), glm::vec2(1, 0),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x , y + cube_offset, z ), glm::vec2(1, 1),glm::vec2(1,0)));
 
                     mesh_face_count++;
                 }
@@ -177,17 +176,17 @@ void Chunk::GenerateFaces(World& world) {
                     }
                 }
                 else {
-                    int cube_right = CalculateIndex(x + 1, y, z);
+                    int cube_right = CalculateIndex(x + cube_offset, y, z);
                     if (cube_data_[cube_right].is_air) {
                         draw_right_face = true;
                     }
                 }
 
                 if (draw_right_face) {
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z - cube_offset), glm::vec2(0.f, 1.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z - cube_offset), glm::vec2(0.f, 0.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y - cube_offset, z + cube_offset), glm::vec2(1.f, 0.f),glm::vec2(1.f,0.f)));
-                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z + cube_offset), glm::vec2(1.f, 1.f),glm::vec2(1.f,0.f)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z ), glm::vec2(0, 1),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y , z ), glm::vec2(0, 0),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y , z + cube_offset), glm::vec2(1, 0),glm::vec2(1,0)));
+                    vertices.emplace_back(Vertex(glm::vec3(x + cube_offset, y + cube_offset, z + cube_offset), glm::vec2(1, 1),glm::vec2(1,0)));
 
                     mesh_face_count++;
                 }
@@ -207,9 +206,9 @@ void Chunk::BindVAOAttributes(std::vector<Vertex>& vertices, std::vector<unsigne
     VBO1_.Bind();
     EBO1_.Bind();
 
-    VAO1_.LinkAttrib(0,3,GL_FLOAT, sizeof(Vertex), (void*)0);
-    VAO1_.LinkAttrib(1,2,GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-    VAO1_.LinkAttrib(2,2,GL_FLOAT, sizeof(Vertex), (void*)(5 * sizeof(float)));
+    VAO1_.LinkAttrib(0,3,GL_UNSIGNED_SHORT, sizeof(Vertex), (void*)0);
+    VAO1_.LinkAttrib(1,2,GL_UNSIGNED_BYTE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coords));
+    VAO1_.LinkAttrib(2,2,GL_UNSIGNED_BYTE, sizeof(Vertex), (void*)offsetof(Vertex, atlas_coords));
     // VAO1.LinkAttrib(VBO1,2,3,GL_FLOAT, 5 * sizeof(int), (void*)(5 * sizeof(float))); //Lighting normal isn't needed yet
 
     VAO1_.Unbind();

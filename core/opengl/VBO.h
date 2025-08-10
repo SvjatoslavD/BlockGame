@@ -11,9 +11,9 @@
 #include <vector>
 
 struct Vertex {
-    glm::vec3 position;
-    glm::vec2 tex_coords;
-    glm::vec2 atlas_coords;
+    glm::u16vec3 position;
+    glm::u8vec2 tex_coords;
+    glm::u8vec2 atlas_coords;
     // glm::vec3 normal;
 };
 
