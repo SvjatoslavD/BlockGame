@@ -20,7 +20,7 @@ struct CubeData;
 
 class Chunk {
 public:
-    Chunk(std::vector<CubeData> cube_data, World& world,glm::vec2 chunk_coords);
+    Chunk(std::vector<CubeData> cube_data, World& world,glm::ivec2 chunk_coords);
     ~Chunk();
 
     std::vector<CubeData>& getCubeData();

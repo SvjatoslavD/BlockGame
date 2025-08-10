@@ -24,12 +24,15 @@ int main() {
 
     World our_world{};
 
-    Texture test("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 4, 4);
+    Texture test("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 
     test.TexUnit(ourShader, "textureTop", 0);
 
+    glm::fvec2 atlas_tile_size = glm::vec2(1.f/5.f,1.f/5.f);
+    ourShader.setVec2("atlasTileSize", atlas_tile_size);
+
     sf::Vector2i windowCenter = (window.getPosition() + sf::Vector2i(window.getSize().x / 2, window.getSize().y / 2));
-    Camera camera(win_width, win_height, glm::vec3(0.f, 200.f, 0.f), windowCenter);
+    Camera camera(win_width, win_height, glm::vec3(0.f, 170.f, 0.f), windowCenter);
 
     sf::Clock clock;
     float lastFrame = 0.0f;
