@@ -17,6 +17,7 @@
 class World;
 
 struct CubeData;
+enum SolidBlockType;
 
 class Chunk {
 public:
@@ -51,5 +52,6 @@ private:
 struct CubeData {
     bool is_air;
     glm::vec3 position;
+    SolidBlockType type;
 };
 #endif // CHUNK_H

@@ -7,6 +7,7 @@
 
 #include <map>
 #include "../external/FastNoiseLite.h"
+#include "Tilemap.h"
 #include "Camera.h"
 
 struct CubeData;

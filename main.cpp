@@ -24,9 +24,9 @@ int main() {
 
     World our_world{};
 
-    Texture test("../assets/images/tile-map.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture test("../assets/images/tile-map.png", GL_TEXTURE_2D_ARRAY, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 16);
 
-    test.TexUnit(ourShader, "textureTop", 0);
+    test.TexUnit(ourShader, "TextureArray1", 0);
 
     glm::fvec2 atlas_tile_size = glm::vec2(1.f/5.f,1.f/5.f);
     ourShader.setVec2("atlasTileSize", atlas_tile_size);

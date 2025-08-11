@@ -14,7 +14,7 @@ class Texture {
 public:
     GLuint ID;
     GLenum type;
-    Texture(const std::string& fileName, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
+    Texture(const std::string& fileName, GLenum texType, GLenum slot, GLenum format, GLenum pixelType, int tileSize);
 
     void TexUnit(Shader shader, const char* uniform, GLuint unit);
     void Bind();

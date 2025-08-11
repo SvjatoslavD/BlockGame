@@ -34,6 +34,8 @@ set(SOURCE
         core/application/GameManager.cpp
         core/application/GameManager.h
         core/states/GameState.h
+        core/Tilemap.cpp
+        core/Tilemap.h
 )
 
 add_executable(main ${SOURCE})

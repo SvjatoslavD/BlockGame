@@ -9,11 +9,11 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <vector>
+#include <glm/fwd.hpp>
 
 struct Vertex {
     glm::u16vec3 position;
-    glm::u8vec2 tex_coords;
-    glm::u8vec2 atlas_coords;
+    glm::u8vec3 tex_coords;
     // glm::vec3 normal;
 };
 
