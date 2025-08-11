@@ -10,8 +10,13 @@ find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRE
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
+set(LIBS
+        GLEW::GLEW
+        SFML::Network SFML::Graphics SFML::Window SFML::Audio SFML::System
+        glm::glm
+)
+
 set(SOURCE
-        main.cpp
         core/opengl/Shader.cpp
         core/Window-Setup.cpp
         core/opengl/EBO.cpp
@@ -38,9 +43,20 @@ set(SOURCE
         core/Tilemap.h
 )
 
-add_executable(main ${SOURCE})
+add_executable(MyGame main.cpp ${SOURCE})
 
-target_link_libraries(main PRIVATE
-        GLEW::GLEW
-        SFML::Network SFML::Graphics SFML::Window SFML::Audio SFML::System
-        glm::glm)
+target_link_libraries(MyGame PRIVATE ${LIBS})
+
+enable_testing()
+
+find_package(GTest CONFIG REQUIRED)
+
+set(TESTS
+        tests/TestChunk.cpp
+)
+
+add_executable(MyTests ${TESTS} ${SOURCE})
+
+target_link_libraries(MyTests PRIVATE ${LIBS} GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+
+add_test(NAME AllTests COMMAND MyTests)

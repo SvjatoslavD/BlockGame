@@ -70,35 +70,34 @@ std::vector<CubeData> World::GenerateChunkData(glm::ivec2 key) {
 
 	FastNoiseLite terrain_noise;
 	terrain_noise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
-	terrain_noise.SetFrequency(0.01f);
+	terrain_noise.SetFrequency(0.005f);
 	terrain_noise.SetSeed(0);
 
 	FastNoiseLite mountain_noise;
-	mountain_noise.SetFrequency(0.1f);
-	mountain_noise.SetSeed(0);
 	mountain_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	mountain_noise.SetFrequency(0.01f);
+	mountain_noise.SetSeed(0);
 
 	glm::fvec2 chunk_coords = glm::fvec2(key);
 	int y_height = 0;
 
 	for (int x = 0; x < k_chunk_size_x_; x++) {
 		for (int z = 0; z < k_chunk_size_z_; z++) {
+			float terrain_noise_value = terrain_noise.GetNoise(chunk_coords.x * 16 + x, chunk_coords.y * 16 + z);
+			int terrain_height = static_cast<int>((terrain_noise_value + 1.0f) * 0.5f * k_chunk_size_y_/8);
 
 			float mountain_noise_val = mountain_noise.GetNoise(chunk_coords.x * 16 + x, chunk_coords.y * 16 + z);
-			int mountain_height = static_cast<int>(pow(((mountain_noise_val + 1.0f) * 0.5f),.3) * (k_chunk_size_y_/6));
+			int mountain_height = static_cast<int>(pow(((mountain_noise_val + 1.0f) * 0.5f),.3) * (k_chunk_size_y_/8) + 16);
 
-			y_height = mountain_height + k_chunk_size_y_/8;
+			y_height = mountain_height + terrain_height;
 
 			for (int y = 0; y < k_chunk_size_y_; y++) {
 				CubeData cube_data{};
-				if (y < y_height) {
+				if (y <= y_height) {
 					cube_data.is_air = false;
-					if (y == y_height - 1) {
-						cube_data.type = GRASS_BLOCK;
-					}
-					else {
-						cube_data.type = STONE_BLOCK;
-					}
+
+					if (y == y_height) { cube_data.type = GRASS_BLOCK;}
+					else { cube_data.type = STONE_BLOCK; }
 				}
 				else {
 					cube_data.is_air = true;

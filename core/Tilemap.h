@@ -6,6 +6,8 @@
 #define TILEMAP_H
 #include <string>
 
+enum BlockFace;
+enum SolidBlockType;
 
 class Tilemap {
 public:
@@ -16,55 +18,6 @@ private:
 	int tile_size_ = 16;
 	std::string tile_map_ = "../assets/images/tile-map.png";
 
-};
-
-// For all enums, the first item is defaulted to 0, and incremented subsequently
-
-// Corresponds to block tile-map; index is (x + y*x_size)
-enum BlockFace {
-	GRASS_TOP,
-	GRASS_SIDE,
-	DIRT_SIDE,
-	SAND_SIDE,
-	GRAVEL_SIDE,
-	STONE_SIDE,
-	STONE_DIAMOND_ORE_SIDE,
-	STONE_COPPER_ORE_SIDE,
-	STONE_IRON_ORE_SIDE,
-	STONE_GOLD_ORE_SIDE,
-	OAK_LOG_SIDE,
-	OAK_LOG_TOP,
-	OAK_PLANK_SIDE,
-	OAK_PLANK_SLAB_SIDE,
-	OAK_PLANK_STAIR_SIDE,
-	LEAVES_1_SIDE,
-	LEAVES_2_SIDE,
-	WATER_TOP,
-	COBBLESTONE_SIDE,
-	COBBLESTONE_SLAB_SIDE,
-	ROSE_SIDE,
-	DANDELION_SIDE,
-	SMALL_GRASS_SIDE,
-	SNOW_SIDE,
-	TEST_SIDE
-};
-
-enum SolidBlockType {
-	GRASS_BLOCK,
-	DIRT_BLOCK,
-	SAND_BLOCK,
-	GRAVEL_BLOCK,
-	STONE_BLOCK,
-	STONE_COPPER_ORE_BLOCK,
-	STONE_IRON_ORE_BLOCK,
-	STONE_GOLD_ORE_BLOCK,
-	STONE_DIAMOND_ORE_BLOCK,
-	OAK_LOG_BLOCK,
-	OAK_PLANK_BLOCK,
-	OAK_PLANK_SLAB_BLOCK,
-	OAK_PLANK_STAIR_BLOCK,
-	COBBLESTONE_BLOCK,
-	COBBLESTONE_SLAB_BLOCK,
 };
 
 struct Block {
@@ -93,6 +46,55 @@ struct Block {
 
 // the index of "SolidBlocks" should match the index of the "SolidBlockType" enum
 extern Block SolidBlocks[];
+
+// For all enums, the first item is defaulted to 0, and incremented subsequently
+
+// Corresponds to block tile-map; index is (x + y*x_size)
+enum BlockFace : int {
+	GRASS_TOP,
+	GRASS_SIDE,
+	DIRT_SIDE,
+	SAND_SIDE,
+	GRAVEL_SIDE,
+	STONE_SIDE,
+	STONE_DIAMOND_ORE_SIDE,
+	STONE_COPPER_ORE_SIDE,
+	STONE_IRON_ORE_SIDE,
+	STONE_GOLD_ORE_SIDE,
+	OAK_LOG_SIDE,
+	OAK_LOG_TOP,
+	OAK_PLANK_SIDE,
+	OAK_PLANK_SLAB_SIDE,
+	OAK_PLANK_STAIR_SIDE,
+	LEAVES_1_SIDE,
+	LEAVES_2_SIDE,
+	WATER_TOP,
+	COBBLESTONE_SIDE,
+	COBBLESTONE_SLAB_SIDE,
+	ROSE_SIDE,
+	DANDELION_SIDE,
+	SMALL_GRASS_SIDE,
+	SNOW_SIDE,
+	TEST_SIDE
+};
+
+enum SolidBlockType : int {
+	GRASS_BLOCK ,
+	DIRT_BLOCK,
+	SAND_BLOCK,
+	GRAVEL_BLOCK,
+	STONE_BLOCK,
+	STONE_COPPER_ORE_BLOCK,
+	STONE_IRON_ORE_BLOCK,
+	STONE_GOLD_ORE_BLOCK,
+	STONE_DIAMOND_ORE_BLOCK,
+	OAK_LOG_BLOCK,
+	OAK_PLANK_BLOCK,
+	OAK_PLANK_SLAB_BLOCK,
+	OAK_PLANK_STAIR_BLOCK,
+	COBBLESTONE_BLOCK,
+	COBBLESTONE_SLAB_BLOCK,
+};
 
 
 #endif //TILEMAP_H
