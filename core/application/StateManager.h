@@ -10,10 +10,10 @@
 
 class GameState;
 
-class GameManager {
+class StateManager {
 public:
-	GameManager(int width, int height, glm::vec3 position, sf::Vector2i window_center);
-	~GameManager();
+	StateManager(int width, int height, glm::vec3 position, sf::Vector2i window_center);
+	~StateManager();
 
 	void ChangeState(GameState* state);
 	void PushState(GameState* state);

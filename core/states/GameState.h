@@ -5,24 +5,24 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include "../application/GameManager.h"
+#include "../application/StateManager.h"
 
 class GameState {
 public:
-	explicit GameState(GameManager* game) : game(game) {};
+	explicit GameState(StateManager* game) : game(game) {};
 	virtual ~GameState() = default;
 
 	void Pause() { paused = true; };
 	void Resume() { paused = false; };
 	bool IsPaused() const { return paused;}
 
-	virtual void HandleInput(GameManager* game, sf::Event& event) {};
-	virtual void Update(GameManager* game) {};
-	virtual void Draw(GameManager* game) {};
+	virtual void HandleInput(StateManager* game, sf::Event& event) {};
+	virtual void Update(StateManager* game) {};
+	virtual void Draw(StateManager* game) {};
 
 protected:
 	GameState() {};
-	GameManager* game;
+	StateManager* game;
 	bool paused = false;
 };
 

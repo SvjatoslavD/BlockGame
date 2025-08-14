@@ -19,8 +19,6 @@ Chunk::~Chunk() {
 }
 
 void Chunk::GenerateFaces(World& world) {
-    std::vector<Vertex> vertices;
-
     int chunk_x = chunk_coords_.x;
     int chunk_z = chunk_coords_.y;
 
@@ -195,11 +193,10 @@ void Chunk::GenerateFaces(World& world) {
             }
         }
     }
-    std::vector<unsigned int> indices = AddIndices(mesh_face_count);
-    BindVAOAttributes(vertices, indices);
+    indices = AddIndices(mesh_face_count);
 }
 
-void Chunk::BindVAOAttributes(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices) {
+void Chunk::BindVAOAttributes() {
     VAO1_.Bind();
 
     VBO1_.SetData(vertices);
@@ -218,6 +215,10 @@ void Chunk::BindVAOAttributes(std::vector<Vertex>& vertices, std::vector<unsigne
 }
 
 void Chunk::RenderChunk() {
+    if (chunk_changed_) {
+        BindVAOAttributes();
+        chunk_changed_ = false;
+    }
     VAO1_.Bind();
     glDrawElements(GL_TRIANGLES, indices_size, GL_UNSIGNED_INT, 0);
 }

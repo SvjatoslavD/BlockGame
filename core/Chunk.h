@@ -39,12 +39,14 @@ private:
     unsigned int k_chunk_size_z_ = 16;
 
     int indices_size = 0;
+    bool chunk_changed_ = true;
 
     std::vector<CubeData> cube_data_;
     std::vector<unsigned int> indices;
+    std::vector<Vertex> vertices;
 
     void GenerateFaces(World& world);
-    void BindVAOAttributes(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+    void BindVAOAttributes();
     std::vector<unsigned int> AddIndices(unsigned int face_count);
     int CalculateIndex(int x, int y, int z) const;
 };

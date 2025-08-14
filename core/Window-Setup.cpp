@@ -20,8 +20,6 @@ sf::Window WindowSetup::Start(int win_width, int win_height) {
 
     // create the window
     sf::Window window(sf::VideoMode({ (unsigned)win_width, (unsigned)win_height }), "OpenGL", sf::Style::Default, sf::State::Windowed, settings);
-    window.setVerticalSyncEnabled(true);
-    window.setFramerateLimit(60);
 
     // initialize the OpenGL states
     bool active = window.setActive();

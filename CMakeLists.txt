@@ -36,11 +36,13 @@ set(SOURCE
         core/Camera.h
         core/World.h
         external/FastNoiseLite.h
-        core/application/GameManager.cpp
-        core/application/GameManager.h
+        core/application/StateManager.cpp
+        core/application/StateManager.h
         core/states/GameState.h
         core/Tilemap.cpp
         core/Tilemap.h
+        core/application/Application.cpp
+        core/application/Application.h
 )
 
 add_executable(MyGame main.cpp ${SOURCE})
@@ -52,7 +54,7 @@ enable_testing()
 find_package(GTest CONFIG REQUIRED)
 
 set(TESTS
-        tests/TestChunk.cpp
+        tests/TestApplication.cpp
 )
 
 add_executable(MyTests ${TESTS} ${SOURCE})
