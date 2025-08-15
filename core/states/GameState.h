@@ -9,12 +9,14 @@
 
 class GameState {
 public:
-	explicit GameState(StateManager* game) : game(game) {};
+	explicit GameState(StateManager* state_manager) : state_manager_(state_manager) {};
 	virtual ~GameState() = default;
 
+	// Pausing the game will prevent game logic for progressing and inputs from registering
+	// Can still render items is state above has transparency
 	void Pause() { paused = true; };
 	void Resume() { paused = false; };
-	bool IsPaused() const { return paused;}
+	bool isPaused() const { return paused;}
 
 	virtual void HandleInput(StateManager* game, sf::Event& event) {};
 	virtual void Update(StateManager* game) {};
@@ -22,7 +24,7 @@ public:
 
 protected:
 	GameState() {};
-	StateManager* game;
+	StateManager* state_manager_;
 	bool paused = false;
 };
 

@@ -6,13 +6,18 @@
 
 
 Application::Application(const unsigned int win_width, const unsigned int win_height, unsigned int target_fps):
-	win_width_(win_width), win_height_(win_height), render_delta_time_(1/target_fps) {
+	win_width_(win_width), win_height_(win_height), render_delta_time_(1.f/static_cast<float>(target_fps)) {
 	// initialize members
 	SetupWindow();
+	renderer_.Setup(this);
+	state_manager_.Setup(this);
 
-	// start game loop
-	GameLoop();
+	// state_manager_.PushState(TitleState);
 }
+
+Application::~Application() = default;
+
+void Application::StartApplication() { GameLoop(); }
 
 void Application::SetupWindow() {
 	// load variables needed for the creation of the window
@@ -29,7 +34,7 @@ void Application::SetupWindow() {
 	if (!active) {
 		std::cerr << "Failed to set active window" << std::endl;
 	}
-	glViewport(0, 0, win_width_, win_height_);
+	glViewport(0, 0, static_cast<int>(win_width_), static_cast<int>(win_height_));
 
 	// initialize glew
 	glewExperimental = GL_TRUE;
@@ -45,12 +50,9 @@ void Application::SetupWindow() {
 	glFrontFace(GL_CW);
 }
 
-Application::~Application() {}
-
 void Application::GameLoop() {
 	// can have different tick speeds for rendering and logic
 	sf::Clock clock;
-	float last_frame = 0.0f;
 	float delta_time = 0.0f;
 
 	float last_logic_frame = 0.0f;
@@ -58,32 +60,25 @@ void Application::GameLoop() {
 
 	while (is_running_) {
 		// calculate delta time per frame
-		float current_frame = clock.getElapsedTime().asSeconds();
-		delta_time = current_frame - last_frame;
+		delta_time = clock.restart().asSeconds();
+
 		last_logic_frame += delta_time;
 		last_render_frame += delta_time;
-		last_frame = current_frame;
+
+		state_manager_.HandleInput();
 
 		// logic
 		if (last_logic_frame >= k_logic_delta_time_) {
 			last_logic_frame -= k_logic_delta_time_;
 
-
+			state_manager_.Update(delta_time);
 		}
 
 		// rendering
 		if (last_render_frame >= render_delta_time_) {
 			last_render_frame -= render_delta_time_;
 
-
-			glClearColor(0.5f, 0.8f, 0.92f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			window_.display();
-		}
-
-		if (clock.getElapsedTime().asSeconds() > 5) {
-			EndApplication();
+			state_manager_.Draw();
 		}
 	}
 }

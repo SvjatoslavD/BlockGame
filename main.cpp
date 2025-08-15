@@ -11,8 +11,6 @@ int main() {
     //
     // test.TexUnit(ourShader, "TextureArray1", 0);
     //
-    // glm::fvec2 atlas_tile_size = glm::vec2(1.f/5.f,1.f/5.f);
-    // ourShader.setVec2("atlasTileSize", atlas_tile_size);
     //
     // sf::Vector2i windowCenter = (window.getPosition() + sf::Vector2i(window.getSize().x / 2, window.getSize().y / 2));
     // Camera camera(win_width, win_height, glm::vec3(0.f, 110.f, 0.f), windowCenter);
@@ -37,7 +35,9 @@ int main() {
     //
     // ourShader.Delete();
 
-	Application app(1000,800, 60);
+	Application application(1000,800, 60);
+
+	application.StartApplication();
 
     return 0;
 }

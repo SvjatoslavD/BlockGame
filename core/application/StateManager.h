@@ -4,34 +4,38 @@
 
 #ifndef GAME_H
 #define GAME_H
-#include <glm/vec3.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Window.hpp>
 
+#include <SFML/Window/Window.hpp>
+#include <stack>
+
+#include "Renderer.h"
+
+class Application;
 class GameState;
 
 class StateManager {
 public:
-	StateManager(int width, int height, glm::vec3 position, sf::Vector2i window_center);
+	StateManager();
 	~StateManager();
 
-	void ChangeState(GameState* state);
+	void Setup(Application* application);
+
+	void ReplaceState(GameState* state);
 	void PushState(GameState* state);
 	void PopState();
+	unsigned int getStatesSize() const { return states_.size();}
 
 	void HandleInput();
-	void Update();
+	void Update(float delta_time);
 	void Draw();
 
-	bool Running() const {return running;}
-	void Quit() { running = false; }
-
-	sf::Window* GetWindow() {return &window;}
-
 private:
-	sf::Window window;
-	std::vector<GameState*> states;
-	bool running;
+	bool state_manager_setup_ = false;
+	std::stack<GameState*> states_;
+
+	Application* application_;
+	Renderer* renderer_;
+	sf::Window* window_;
 };
 
 

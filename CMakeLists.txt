@@ -9,16 +9,19 @@ set(CMAKE_SOURCE_DIR ${CMAKE_BINARY_DIR})
 find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+find_package(ImGui-SFML CONFIG REQUIRED)
 
 set(LIBS
         GLEW::GLEW
         SFML::Network SFML::Graphics SFML::Window SFML::Audio SFML::System
         glm::glm
+        imgui::imgui
+        ImGui-SFML::ImGui-SFML
 )
 
 set(SOURCE
         core/opengl/Shader.cpp
-        core/Window-Setup.cpp
         core/opengl/EBO.cpp
         core/opengl/VAO.cpp
         core/opengl/VBO.cpp
@@ -27,7 +30,6 @@ set(SOURCE
         core/Camera.cpp
         core/World.cpp
         core/opengl/Shader.h
-        core/Window-Setup.h
         core/opengl/EBO.h
         core/opengl/VAO.h
         core/opengl/VBO.h
@@ -43,6 +45,8 @@ set(SOURCE
         core/Tilemap.h
         core/application/Application.cpp
         core/application/Application.h
+        core/application/Renderer.cpp
+        core/application/Renderer.h
 )
 
 add_executable(MyGame main.cpp ${SOURCE})
@@ -55,6 +59,8 @@ find_package(GTest CONFIG REQUIRED)
 
 set(TESTS
         tests/TestApplication.cpp
+        tests/ApplicationFixture.cpp
+        tests/ApplicationFixture.h
 )
 
 add_executable(MyTests ${TESTS} ${SOURCE})

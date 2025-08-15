@@ -10,6 +10,7 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 
+#include "Renderer.h"
 #include "StateManager.h"
 
 class Application {
@@ -17,8 +18,12 @@ public:
 	Application(unsigned int win_width, unsigned int win_height, unsigned int target_fps);
 	~Application();
 
+	void StartApplication();
 	void EndApplication() {is_running_ = false;};
-	sf::Vector2u GetWindowSize() const { return window_.getSize();};
+
+	[[nodiscard]] sf::Vector2u getWindowSize() const { return window_.getSize();};
+	sf::Window* getWindow() {return &window_;};
+	Renderer* getRenderer() {return &renderer_;};
 
 private:
 	bool is_running_ = true;
@@ -29,9 +34,9 @@ private:
 	void GameLoop();
 	void SetupWindow();
 
-	// StateManager state_manager_;
+	StateManager state_manager_;
 	// ThreadManager thread_manager_;
-	// Renderer renderer_;
+	Renderer renderer_;
 	// ResourceManager resource_manager_;
 	sf::Window window_;
 };

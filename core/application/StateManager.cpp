@@ -3,73 +3,88 @@
 // //
 //
 #include "StateManager.h"
-//
-// #include <iostream>
-// #include <SFML/Window.hpp>
-//
-// GameManager::GameManager(int width, int height, glm::vec3 position, sf::Vector2i window_center) {
-// 	window.create(sf::VideoMode({850, 975}), "Minesweeper", sf::Style::Default);
-// 	window.setPosition({500, 0});
-// 	window.setFramerateLimit(30);
-//
-// 	running = true;
-//
-// 	// ChangeState(new TitleState(this));
-// }
-//
-// GameManager::~GameManager() {
-// 	while (!states.empty()) {
-// 		delete states.back();
-// 		states.pop_back();
-// 	}
-// 	window.close();
-// }
-//
-// void GameManager::ChangeState(GameState* state) {
-// 	if (!states.empty()) {
-// 		delete states.back();
-// 		states.pop_back();
-// 	}
-// 	states.push_back(state);
-// }
-//
-// void GameManager::PushState(GameState* state) {
-// 	if (!states.empty()) {
-// 		states.back()->Pause();
-// 	}
-// 	states.push_back(state);
-// }
-//
-// void GameManager::PopState() {
-// 	if (!states.empty()) {
-// 		delete states.back();
-// 		states.pop_back();
-// 		states.back()->Resume();
-// 	}
-// 	else {
-// 		std::cerr << "No state to pop" << std::endl;
-// 	}
-// }
-//
-// void GameManager::HandleInput() {
-// 	while (auto event = window.pollEvent()) {
-// 		if (event->is<sf::Event::Closed>()) { running = false; }
-// 		if (event->is<sf::Event::KeyPressed>()) {}
-//
-// 		states.back()->HandleInput(this, *event);
-// 	}
-//
-// 	if (isKeyPressed(sf::Keyboard::Key::Q)) {running = false;}
-// }
-//
-// void GameManager::Update() {
-// 	states.back()->Update(this);
-// }
-//
-// void GameManager::Draw() {
-// 	window.clear();
-// 	states.back()->Draw(this);
-// 	window.display();
-// }
-//
-//
+#include "../states/GameState.h"
+#include "Application.h"
+
+#include <iostream>
+#include <SFML/Window.hpp>
+
+StateManager::StateManager() = default;
+
+StateManager::~StateManager() {
+	while (!states_.empty()) {
+		delete states_.top();
+		states_.pop();
+	}
+}
+
+void StateManager::Setup(Application* application) {
+	application_ = application;
+	renderer_ = application->getRenderer();
+	window_ = application->getWindow();
+
+	state_manager_setup_ = true;
+}
+
+void StateManager::ReplaceState(GameState* state) {
+	if (!states_.empty()) {
+		delete states_.top();
+		states_.pop();
+	}
+	states_.push(state);
+}
+
+void StateManager::PushState(GameState* state) {
+	if (!states_.empty()) {
+		states_.top()->Pause();
+	}
+	states_.push(state);
+}
+
+void StateManager::PopState() {
+	if (!states_.empty()) {
+		delete states_.top();
+		states_.pop();
+		states_.top()->Resume();
+	}
+	else {
+		std::cerr << "No state to pop" << std::endl;
+	}
+}
+
+void StateManager::HandleInput() {
+	assert(state_manager_setup_);
+	while (auto event = window_->pollEvent()) {
+		// events/inputs which can be used in all states
+		if (event->is<sf::Event::Closed>()) { application_->EndApplication(); }
+		if (event->is<sf::Event::KeyPressed>()) {}
+
+		if (!states_.empty()) {
+			// events/inputs specific to the state
+			states_.top()->HandleInput(this, *event);
+		}
+
+		#ifdef _DEBUG
+		if (isKeyPressed(sf::Keyboard::Key::Q)) {application_->EndApplication();}
+		#endif
+	}
+}
+
+void StateManager::Update(float delta_time) {
+	assert(state_manager_setup_);
+	if (!states_.empty()) {
+		// Calculate physics
+
+		// Update player
+
+		// Update entities
+	}
+}
+
+void StateManager::Draw() {
+	assert(state_manager_setup_);
+	// Should notify the renderer to draw the appropriate objects
+	renderer_->Use();
+}
+
+
