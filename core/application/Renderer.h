@@ -7,8 +7,6 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window.hpp>
-#include <imgui.h>
-#include <imgui-SFML.h>
 
 class Application;
 
@@ -19,18 +17,14 @@ public:
 
 	void Setup(Application* application);
 	bool isSetup() const {return is_setup_;}
-	void Use();
+	void Clear();
+	void Display();
 
 private:
 	bool is_setup_ = false;
 
 	Application* application_= nullptr;
 	sf::Window* window_ = nullptr;
-
-	void RenderSkybox();
-	void RenderBlocks();
-	void RenderEntities();
-	void RenderUI();
 };
 
 

@@ -26,7 +26,7 @@ public:
 	unsigned int getStatesSize() const { return states_.size();}
 
 	void HandleInput();
-	void Update(float delta_time);
+	void Update(sf::Time delta_time);
 	void Draw();
 
 private:

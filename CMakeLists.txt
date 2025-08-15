@@ -47,6 +47,8 @@ set(SOURCE
         core/application/Application.h
         core/application/Renderer.cpp
         core/application/Renderer.h
+        core/states/TitleState.cpp
+        core/states/TitleState.h
 )
 
 add_executable(MyGame main.cpp ${SOURCE})

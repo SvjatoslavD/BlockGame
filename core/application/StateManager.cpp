@@ -61,7 +61,7 @@ void StateManager::HandleInput() {
 
 		if (!states_.empty()) {
 			// events/inputs specific to the state
-			states_.top()->HandleInput(this, *event);
+			states_.top()->HandleInput(*event);
 		}
 
 		#ifdef _DEBUG
@@ -70,21 +70,20 @@ void StateManager::HandleInput() {
 	}
 }
 
-void StateManager::Update(float delta_time) {
+void StateManager::Update(sf::Time delta_time) {
 	assert(state_manager_setup_);
 	if (!states_.empty()) {
-		// Calculate physics
-
-		// Update player
-
-		// Update entities
+		states_.top()->Update(delta_time);
 	}
 }
 
 void StateManager::Draw() {
 	assert(state_manager_setup_);
-	// Should notify the renderer to draw the appropriate objects
-	renderer_->Use();
+	if (!states_.empty()) {
+		renderer_->Clear();
+		states_.top()->Draw();
+		renderer_->Display();
+	}
 }
 
 

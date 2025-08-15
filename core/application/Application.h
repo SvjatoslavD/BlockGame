@@ -12,6 +12,7 @@
 
 #include "Renderer.h"
 #include "StateManager.h"
+#include "../states/TitleState.h"
 
 class Application {
 public:

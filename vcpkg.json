@@ -15,10 +15,10 @@
     "name" : "gtest",
     "version>=" : "1.16.0"
   }, {
-    "name" : "imgui-sfml",
-    "version>=" : "3.0#1"
-  }, {
     "name" : "imgui",
     "version>=" : "1.91.8#4"
+  }, {
+    "name" : "imgui-sfml",
+    "version>=" : "3.0#1"
   } ]
 }

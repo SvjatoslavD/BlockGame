@@ -12,12 +12,14 @@ Application::Application(const unsigned int win_width, const unsigned int win_he
 	renderer_.Setup(this);
 	state_manager_.Setup(this);
 
-	// state_manager_.PushState(TitleState);
 }
 
 Application::~Application() = default;
 
-void Application::StartApplication() { GameLoop(); }
+void Application::StartApplication() {
+	state_manager_.PushState(new TitleState(&state_manager_,this));
+	GameLoop();
+}
 
 void Application::SetupWindow() {
 	// load variables needed for the creation of the window
@@ -53,17 +55,17 @@ void Application::SetupWindow() {
 void Application::GameLoop() {
 	// can have different tick speeds for rendering and logic
 	sf::Clock clock;
-	float delta_time = 0.0f;
+	sf::Time delta_time;
 
 	float last_logic_frame = 0.0f;
 	float last_render_frame = 0.0f;
 
 	while (is_running_) {
 		// calculate delta time per frame
-		delta_time = clock.restart().asSeconds();
+		delta_time = clock.restart();
 
-		last_logic_frame += delta_time;
-		last_render_frame += delta_time;
+		last_logic_frame += delta_time.asSeconds();
+		last_render_frame += delta_time.asSeconds();
 
 		state_manager_.HandleInput();
 
