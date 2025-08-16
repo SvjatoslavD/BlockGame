@@ -2,8 +2,10 @@
 // Created by svjat on 8/14/2025.
 //
 
-#include "Application.h"
 #include "Renderer.h"
+#include "Application.h"
+
+#include "imgui-SFML.h"
 
 Renderer::Renderer() = default;
 
@@ -14,6 +16,11 @@ void Renderer::Setup(Application* application) {
 	application_ = application;
 	window_ = application_->getWindow();
 
+	bool imgui_sfml_init = ImGui::SFML::Init(*window_,static_cast<sf::Vector2f>(window_->getSize()));
+	if (!imgui_sfml_init) {
+		std::cerr << "Failed to initialize ImGui-SFML" << std::endl;
+	}
+
 	is_setup_ = true;
 }
 
@@ -23,5 +30,6 @@ void Renderer::Clear() {
 }
 
 void Renderer::Display() {
+	ImGui::SFML::Render();
 	window_->display();
 }

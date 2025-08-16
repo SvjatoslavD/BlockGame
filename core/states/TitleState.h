@@ -23,6 +23,10 @@ private:
 	StateManager* state_manager_ = nullptr;
 
 	void ExampleWindow();
+
+	void HandlePlayButton();
+	void HandleOptionsButton();
+	void HandleExitButton();
 };
 
 
