@@ -6,7 +6,7 @@
 #define WORLD_H
 
 #include <map>
-#include "../external/FastNoiseLite.h"
+#include "FastNoiseLite.h"
 #include "Tilemap.h"
 #include "Camera.h"
 

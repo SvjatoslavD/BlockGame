@@ -6,7 +6,7 @@
 #define APPLICATIONFIXTURE_H
 
 #include <gtest/gtest.h>
-#include "../core/application/Application.h"
+#include "../src/application/Application.h"
 
 class ApplicationFixture : public testing::Test {
 protected:
