@@ -7,7 +7,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 # Create the main executable
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ../main.cpp)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE

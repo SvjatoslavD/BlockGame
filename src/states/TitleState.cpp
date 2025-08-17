@@ -4,17 +4,14 @@
 
 #include "TitleState.h"
 
-#include "../application/Application.h"
+#include "Application.h"
 #include "imgui-SFML.h"
 #include "imgui.h"
 
 TitleState::TitleState(StateManager* state_manager, Application* application):
-   state_manager_(state_manager),application_(application) {
+   GameState(state_manager, application) {
 	assert(state_manager_ != nullptr);
 	assert(application_ != nullptr);
-
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
 }
 
 void TitleState::HandleInput(sf::Event& event) {
@@ -28,13 +25,16 @@ void TitleState::Update(sf::Time delta_time) {
 }
 
 void TitleState::Draw() {
-	ExampleWindow();
+	TitleWindow();
 }
 
-void TitleState::ExampleWindow() {
+void TitleState::TitleWindow() {
 	ImGuiIO& io = ImGui::GetIO();
     float windowWidth = io.DisplaySize.x;
     float windowHeight = io.DisplaySize.y;
+
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
 
     // Create invisible window that covers the entire screen
     ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -49,12 +49,14 @@ void TitleState::ExampleWindow() {
 
     // Title positioning
     const char* title = "BLOCK GAME";
-    ImGui::PushFont(nullptr, 100.f); // Use default font, but you could load a bigger font
+    ImGui::PushFont(nullptr); // Use default font, but you could load a bigger font
 
     // Calculate title size and center it
+	ImGui::SetWindowFontScale(10.f);
     ImVec2 titleSize = ImGui::CalcTextSize(title);
     float titlePosX = (windowWidth - titleSize.x) * 0.5f;
     float titlePosY = windowHeight * 0.25f; // 25% from top
+
 
 	ImGui::SetCursorPos(ImVec2(titlePosX, titlePosY));
 
@@ -62,6 +64,7 @@ void TitleState::ExampleWindow() {
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // White
     ImGui::Text(title);
     ImGui::PopStyleColor();
+	ImGui::SetWindowFontScale(1.f);
     ImGui::PopFont();
 
     // Button styling
@@ -100,6 +103,7 @@ void TitleState::ExampleWindow() {
 void TitleState::HandlePlayButton() {
 	// state_manager_->ReplaceState(new WorldSelectState());
 	std::cout << "Play button clicked!" << std::endl;
+	state_manager_->ReplaceState(Lookup::WorldSelectState);
 }
 
 void TitleState::HandleOptionsButton() {

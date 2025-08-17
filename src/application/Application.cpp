@@ -17,7 +17,7 @@ Application::Application(const unsigned int win_width, const unsigned int win_he
 Application::~Application() = default;
 
 void Application::StartApplication() {
-	state_manager_.PushState(new TitleState(&state_manager_,this));
+	state_manager_.PushState(Lookup::TitleState);
 	GameLoop();
 }
 

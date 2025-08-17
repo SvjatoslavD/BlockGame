@@ -3,11 +3,11 @@
 // //
 //
 #include "StateManager.h"
-#include "../states/GameState.h"
-#include "Application.h"
 
-#include <iostream>
-#include <SFML/Window.hpp>
+#include "TitleState.h"
+#include "WorldSelectState.h"
+
+#include "Application.h"
 
 StateManager::StateManager() = default;
 
@@ -26,19 +26,19 @@ void StateManager::Setup(Application* application) {
 	state_manager_setup_ = true;
 }
 
-void StateManager::ReplaceState(GameState* state) {
+void StateManager::ReplaceState(Lookup::State lookup) {
 	if (!states_.empty()) {
 		delete states_.top();
 		states_.pop();
 	}
-	states_.push(state);
+	CreateNewState(lookup);
 }
 
-void StateManager::PushState(GameState* state) {
+void StateManager::PushState(Lookup::State lookup) {
 	if (!states_.empty()) {
 		states_.top()->Pause();
 	}
-	states_.push(state);
+	CreateNewState(lookup);
 }
 
 void StateManager::PopState() {
@@ -83,6 +83,15 @@ void StateManager::Draw() {
 		renderer_->Clear();
 		states_.top()->Draw();
 		renderer_->Display();
+	}
+}
+
+void StateManager::CreateNewState(Lookup::State lookup) {
+	assert(state_manager_setup_);
+	switch (lookup) {
+		case Lookup::TitleState: states_.push(new TitleState(this, application_)); break;
+		case Lookup::WorldSelectState: states_.push(new WorldSelectState(this,application_)); break;
+		default: std::cerr << "Unknown lookup" << std::endl; break;
 	}
 }
 

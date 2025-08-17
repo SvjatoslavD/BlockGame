@@ -6,12 +6,16 @@
 #define GAME_H
 
 #include <SFML/Window/Window.hpp>
+#include <iostream>
 #include <stack>
 
 #include "Renderer.h"
 
 class Application;
 class GameState;
+namespace Lookup {
+	enum State;
+}
 
 class StateManager {
 public:
@@ -20,8 +24,8 @@ public:
 
 	void Setup(Application* application);
 
-	void ReplaceState(GameState* state);
-	void PushState(GameState* state);
+	void ReplaceState(Lookup::State lookup);
+	void PushState(Lookup::State lookup);
 	void PopState();
 	unsigned int getStatesSize() const { return states_.size();}
 
@@ -36,8 +40,16 @@ private:
 	Application* application_;
 	Renderer* renderer_;
 	sf::Window* window_;
+
+	void CreateNewState(Lookup::State lookup);
 };
 
+namespace Lookup {
+	enum State {
+		TitleState,
+		WorldSelectState,
+	};
+};
 
 
 #endif //GAME_H

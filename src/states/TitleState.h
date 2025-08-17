@@ -7,22 +7,17 @@
 
 #include "GameState.h"
 
-class Application;
-
 class TitleState : public GameState {
 public:
 	explicit TitleState(StateManager* state_manager, Application* application);
-	~TitleState() override = default;
 
 	void HandleInput(sf::Event& event) override;
 	void Update(sf::Time delta_time) override;
 	void Draw() override;
+	~TitleState() override = default;
 
 private:
-	Application* application_ = nullptr;
-	StateManager* state_manager_ = nullptr;
-
-	void ExampleWindow();
+	void TitleWindow();
 
 	void HandlePlayButton();
 	void HandleOptionsButton();
