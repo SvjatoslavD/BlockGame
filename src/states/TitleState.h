@@ -5,9 +5,9 @@
 #ifndef TITLESTATE_H
 #define TITLESTATE_H
 
-#include "GameState.h"
+#include "DefaultState.h"
 
-class TitleState : public GameState {
+class TitleState : public DefaultState {
 public:
 	explicit TitleState(StateManager* state_manager, Application* application);
 

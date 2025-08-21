@@ -9,19 +9,23 @@
 #include "imgui.h"
 
 TitleState::TitleState(StateManager* state_manager, Application* application):
-   GameState(state_manager, application) {
+   DefaultState(state_manager, application) {
 	assert(state_manager_ != nullptr);
 	assert(application_ != nullptr);
 }
 
 void TitleState::HandleInput(sf::Event& event) {
-	ImGui::SFML::ProcessEvent(*application_->getWindow(), event);
+	if (!paused) {
+		ImGui::SFML::ProcessEvent(*application_->getWindow(), event);
+	}
 }
 
 void TitleState::Update(sf::Time delta_time) {
-	sf::Vector2i mouse_pos = ImGui::GetMousePos();
-	sf::Vector2f display_size = ImGui::GetIO().DisplaySize;
-	ImGui::SFML::Update(mouse_pos,display_size,delta_time);
+	if (!paused) {
+		sf::Vector2i mouse_pos = ImGui::GetMousePos();
+		sf::Vector2f display_size = ImGui::GetIO().DisplaySize;
+		ImGui::SFML::Update(mouse_pos,display_size,delta_time);
+	}
 }
 
 void TitleState::Draw() {

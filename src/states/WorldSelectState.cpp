@@ -5,21 +5,26 @@
 #include "WorldSelectState.h"
 
 #include "Application.h"
+#include "GameState.h"
 #include "imgui-SFML.h"
 #include "imgui.h"
 
 WorldSelectState::WorldSelectState(StateManager* state_manager, Application* application) :
-	GameState(state_manager, application) {
+	DefaultState(state_manager, application) {
 }
 
 void WorldSelectState::HandleInput(sf::Event& event) {
-	ImGui::SFML::ProcessEvent(*application_->getWindow(), event);
+	if (!paused) {
+		ImGui::SFML::ProcessEvent(*application_->getWindow(), event);
+	}
 }
 
 void WorldSelectState::Update(sf::Time delta_time) {
-	sf::Vector2i mouse_pos = ImGui::GetMousePos();
-	sf::Vector2f display_size = ImGui::GetIO().DisplaySize;
-	ImGui::SFML::Update(mouse_pos,display_size,delta_time);
+	if (!paused) {
+		sf::Vector2i mouse_pos = ImGui::GetMousePos();
+		sf::Vector2f display_size = ImGui::GetIO().DisplaySize;
+		ImGui::SFML::Update(mouse_pos,display_size,delta_time);
+	}
 }
 
 void WorldSelectState::Draw() {
@@ -216,8 +221,7 @@ void WorldSelectState::PlaySelectedWorld(int world_index) {
     // For now, just print to console
     std::cout << "Playing world: " << world_index << std::endl;
 
-    // Example transition to game state:
-    // state_manager_->PushState(std::make_unique<GameState>(state_manager_, application_));
+    state_manager_->ReplaceState(Lookup::GameState);
 }
 
 void WorldSelectState::CreateNewWorld() {

@@ -12,7 +12,7 @@
 #include "Renderer.h"
 
 class Application;
-class GameState;
+class DefaultState;
 namespace Lookup {
 	enum State;
 }
@@ -35,7 +35,7 @@ public:
 
 private:
 	bool state_manager_setup_ = false;
-	std::stack<GameState*> states_;
+	std::stack<DefaultState*> states_;
 
 	Application* application_;
 	Renderer* renderer_;
@@ -48,6 +48,7 @@ namespace Lookup {
 	enum State {
 		TitleState,
 		WorldSelectState,
+		GameState,
 	};
 };
 

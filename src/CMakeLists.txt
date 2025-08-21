@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 3.30)
 
 # Collect all source files
-file(GLOB_RECURSE SOURCES
+file(GLOB SOURCES
         "*.cpp"
         "*.h"
+        "application/*.h"
+        "application/*.cpp"
+        "opengl/*.h"
+        "opengl/*.cpp"
+        "states/*.h"
+        "states/*.cpp"
 )
 
 # Create the main executable

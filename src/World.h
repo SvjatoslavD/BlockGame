@@ -23,7 +23,7 @@ struct Vec2Less {
 
 class World {
 public:
-	World();
+	World(int seed);
 	~World();
 
 	bool ChunkExists(glm::ivec2 key);
@@ -32,6 +32,7 @@ public:
 	void RenderChunks(Shader& shader, Camera& camera);
 
 private:
+	int seed_;
 	int render_distance_ = 5;
 	bool pause_chunk_loading = false;
 

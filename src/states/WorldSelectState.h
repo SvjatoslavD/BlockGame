@@ -5,9 +5,9 @@
 #ifndef WORLDSELECTSTATE_H
 #define WORLDSELECTSTATE_H
 
-#include "GameState.h"
+#include "DefaultState.h"
 
-class WorldSelectState: public GameState {
+class WorldSelectState: public DefaultState {
 public:
 	explicit WorldSelectState(StateManager* state_manager, Application* application);
 	~WorldSelectState() override = default;

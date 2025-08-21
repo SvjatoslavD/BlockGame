@@ -6,6 +6,7 @@
 
 #include "TitleState.h"
 #include "WorldSelectState.h"
+#include "GameState.h"
 
 #include "Application.h"
 
@@ -91,6 +92,7 @@ void StateManager::CreateNewState(Lookup::State lookup) {
 	switch (lookup) {
 		case Lookup::TitleState: states_.push(new TitleState(this, application_)); break;
 		case Lookup::WorldSelectState: states_.push(new WorldSelectState(this,application_)); break;
+		case Lookup::GameState: states_.push(new GameState(this, application_)); break;
 		default: std::cerr << "Unknown lookup" << std::endl; break;
 	}
 }
