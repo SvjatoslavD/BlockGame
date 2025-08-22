@@ -12,6 +12,10 @@ file(GLOB SOURCES
         "states/*.cpp"
 )
 
+foreach(source ${SOURCES})
+    message(STATUS "  ${source}")
+endforeach()
+
 # Create the main executable
 add_executable(${PROJECT_NAME} ${SOURCES} ../main.cpp)
 

@@ -4,7 +4,7 @@
 
 #include "Texture.h"
 
-Texture::Texture(const std::string& fileName, GLenum texType, GLenum slot, GLenum format, GLenum pixelType, int tileSize) {
+void Texture::Setup(const std::string& fileName, GLenum texType, GLenum slot, GLenum format, GLenum pixelType, int tileSize) {
     // Assigns the type of the texture ot the texture object
     type = texType;
 

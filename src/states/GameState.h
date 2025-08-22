@@ -6,6 +6,9 @@
 #define GAMESTATE_H
 
 #include "DefaultState.h"
+#include "Player.h"
+#include "Texture.h"
+#include "World.h"
 
 class StateManager;
 class Application;
@@ -21,6 +24,11 @@ public:
 
 private:
 	void Gameplay();
+
+	Player player_;
+	Shader our_shader_;
+	World world_;
+	Texture test_;
 };
 
 

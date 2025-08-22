@@ -3,6 +3,7 @@
 //
 
 #include "Chunk.h"
+#include "World.h"
 
 #include <array>
 #include <vector>

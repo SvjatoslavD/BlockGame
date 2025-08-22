@@ -9,9 +9,9 @@
 #include "FastNoiseLite.h"
 #include "Tilemap.h"
 #include "Camera.h"
+#include "Chunk.h"
 
 struct CubeData;
-class Chunk;
 
 struct Vec2Less {
 	bool operator()(const glm::ivec2& a, const glm::ivec2& b) const {
@@ -23,9 +23,10 @@ struct Vec2Less {
 
 class World {
 public:
-	World(int seed);
+	World() = default;
 	~World();
 
+	void Setup(int seed);
 	bool ChunkExists(glm::ivec2 key);
 	std::vector<CubeData>& getChunkData(glm::ivec2 key);
 	void Update(glm::ivec2 player_chunk_coords);

@@ -58,7 +58,6 @@ void StateManager::HandleInput() {
 	while (auto event = window_->pollEvent()) {
 		// events/inputs which can be used in all states
 		if (event->is<sf::Event::Closed>()) { application_->EndApplication(); }
-		if (event->is<sf::Event::KeyPressed>()) {}
 
 		if (!states_.empty()) {
 			// events/inputs specific to the state

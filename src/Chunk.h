@@ -9,7 +9,6 @@
 #include <glm/vec3.hpp>
 #include <vector>
 
-#include "World.h"
 #include "opengl/EBO.h"
 #include "opengl/VAO.h"
 #include "opengl/VBO.h"

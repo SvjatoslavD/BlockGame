@@ -73,7 +73,7 @@ void Application::GameLoop() {
 		if (last_logic_frame >= k_logic_delta_time_) {
 			last_logic_frame -= k_logic_delta_time_;
 
-			state_manager_.Update(delta_time);
+			state_manager_.Update(sf::seconds(k_logic_delta_time_));
 		}
 
 		// rendering

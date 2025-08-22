@@ -5,7 +5,8 @@
 #include "World.h"
 #include "Chunk.h"
 
-World::World(int seed): seed_(seed) {
+void World::Setup(int seed) {
+	seed_ = seed;
 	// load starting chunks into queue
 	for (int x = -render_distance_; x <= render_distance_; x++) {
 		for (int z = -render_distance_; z <= render_distance_; z++) {

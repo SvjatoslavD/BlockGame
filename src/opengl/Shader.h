@@ -20,8 +20,9 @@ public:
     GLuint ID;
 
     // constructor reads and builds the shader
-    Shader(const char* vertexPath, const char* fragmentPath);
+    Shader() = default;
     // use/activate the shader
+	void Setup(const char* vertexPath, const char* fragmentPath);
     void Activate() const;
     void Delete();
     // utility uniform functions

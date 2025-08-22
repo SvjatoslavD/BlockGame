@@ -6,7 +6,7 @@
 
 #include "glm/fwd.hpp"
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath) {
+void Shader::Setup(const char* vertexPath, const char* fragmentPath) {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
