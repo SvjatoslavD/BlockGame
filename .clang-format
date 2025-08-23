@@ -22,6 +22,8 @@ BraceWrapping:
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
 BreakBeforeBraces: Custom
+IndentCaseLabels: true
+IndentCaseBlocks: true
 BreakConstructorInitializers: AfterColon
 ColumnLimit: 500
 Cpp11BracedListStyle: false

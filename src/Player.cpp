@@ -110,7 +110,7 @@ void Player::Update(float delta_time, Shader* our_shader) {
 	}
 
 	camera_.Update(position_, orientation_);
-	camera_.Matrix(50.0f, 0.1f, 600.f, *our_shader, "cameraMatrix");
+	camera_.Matrix(50.0f, 0.1f, 1000.f, *our_shader, "cameraMatrix");
 }
 
 glm::vec2 Player::getChunkCoordinates() const {

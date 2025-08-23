@@ -7,6 +7,30 @@
 
 void World::Setup(int seed) {
 	seed_ = seed;
+
+	// Large scale continent shapes
+	continent_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+	continent_noise_.SetFrequency(0.002f);
+	continent_noise_.SetSeed(seed_);
+
+	// Erosion noise
+	erosion_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	erosion_noise_.SetFrequency(0.008f);
+	erosion_noise_.SetSeed(seed_);
+
+	// Peaks and valley noise
+	peak_and_valley_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	peak_and_valley_noise_.SetFrequency(0.02f);
+	peak_and_valley_noise_.SetFractalType(FastNoiseLite::FractalType_Ridged);
+	peak_and_valley_noise_.SetFractalOctaves(1);
+	peak_and_valley_noise_.SetFractalLacunarity(.3);
+	peak_and_valley_noise_.SetFractalGain(.2);
+	peak_and_valley_noise_.SetSeed(seed_);
+
+	continent_spline_.insert({{-1,20},{-.8,0},{-.4,5},{-.1,50},{.1,55},{.3,80},{.6,120},{.8,130},{1,140}});
+	erosion_spline_.insert({{-1,1.7},{-.7,1.55},{-.65,1.6},{-.2,1.0},{0.0,.4},{0.3,.2},{0.35,.4},{0.42,.4},{0.45,.2},{0.50,.1},{1,.1}});
+	peak_and_valley_spline_.insert({{-1,-80},{-.8,-50},{-.7,-35},{-.2,-30},{.1,25},{.3,40},{.35,40},{.4,35},{.6,65},{.9,75},{1,80}});
+
 	// load starting chunks into queue
 	for (int x = -render_distance_; x <= render_distance_; x++) {
 		for (int z = -render_distance_; z <= render_distance_; z++) {
@@ -73,26 +97,6 @@ std::vector<CubeData> World::GenerateChunkData(glm::ivec2 key) {
 	std::vector<CubeData> cube_data_vec;
 	cube_data_vec.reserve(k_chunk_size_x_*k_chunk_size_y_*k_chunk_size_z_);
 
-// Multiple noise layers for realistic terrain
-    FastNoiseLite continent_noise, mountain_noise, hill_noise;
-
-    // Large scale continent shapes
-    continent_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-    continent_noise.SetFrequency(0.003f);
-    continent_noise.SetSeed(seed_);
-
-    // Mountain ridges
-    mountain_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	mountain_noise.SetFractalType(FastNoiseLite::FractalType_Ridged);
-	mountain_noise.SetFractalOctaves(1);
-    mountain_noise.SetFrequency(0.001f);
-    mountain_noise.SetSeed(seed_);
-
-    // Rolling hills
-    hill_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-    hill_noise.SetFrequency(0.02f);
-    hill_noise.SetSeed(seed_);
-
     glm::fvec2 chunk_coords = glm::fvec2(key);
 
     for (int x = 0; x < k_chunk_size_x_; x++) {
@@ -101,37 +105,30 @@ std::vector<CubeData> World::GenerateChunkData(glm::ivec2 key) {
             float world_z = chunk_coords.y * 16 + z;
 
             // Combine multiple noise octaves
-            float continent = continent_noise.GetNoise(world_x, world_z) * 0.3f;
-            float mountain = mountain_noise.GetNoise(world_x, world_z) * 0.5f;
-            float hill = hill_noise.GetNoise(world_x, world_z) * 0.15f;
+            float continent = continent_noise_.GetNoise(world_x, world_z);
+            float erosion = erosion_noise_.GetNoise(world_x, world_z);
+            float peak_and_valley = peak_and_valley_noise_.GetNoise(world_x, world_z) * .5f;
+
+        	float continent_height = getSplineValue(continent, CONTINENT);
+        	float erosion_mult = getSplineValue(erosion, EROSION);
+        	float peak_and_valley_height = getSplineValue(peak_and_valley, PEAK_AND_VALLEY);
 
             // Combine all noise layers
-            float combined_noise = continent + mountain + hill;
-
-            // More natural height mapping
-            int base_height = 32; // Sea level
-            int height_variation = 80; // Max height above sea level
-        	int mountain_height = base_height + height_variation/6;
-            int terrain_height = base_height + static_cast<int>(combined_noise * height_variation);
-
-            // Clamp to chunk bounds
-            terrain_height = std::max(0, std::min(terrain_height,(int)(k_chunk_size_y_ - 1)));
+            float combined_noise = sea_level_ + (int)((continent_height + peak_and_valley_height) * erosion_mult);
 
             for (int y = 0; y < k_chunk_size_y_; y++) {
                 CubeData cube_data{};
                 cube_data.position = glm::vec3(x, y, z);
 
-                if (y <= terrain_height) {
-                    cube_data.is_air = false;
-
-                    // Better layer system
-                	if (y >= mountain_height) { cube_data.type = STONE_BLOCK;}
+                if (y <= combined_noise) {
+                	if (peak_and_valley_height > 40) {cube_data.type = SNOW_BLOCK; }
                 	else {
-                		if (y == terrain_height) { cube_data.type = GRASS_BLOCK;}
-                		else if (y >= terrain_height - 3) { cube_data.type = DIRT_BLOCK; }
-                		else { cube_data.type = STONE_BLOCK; }
+                		if (y == combined_noise) {cube_data.type = GRASS_BLOCK;}
+                		else if (y >= combined_noise - 3) {cube_data.type = DIRT_BLOCK;}
+                		else {cube_data.type = STONE_BLOCK;}
                 	}
                 }
+            	else if (y > combined_noise && y < sea_level_) {cube_data.type = SAND_BLOCK;}
             	else {
                     cube_data.is_air = true;
                     cube_data.type = DIRT_BLOCK; // Air blocks
@@ -159,5 +156,76 @@ bool World::ChunkExists(glm::ivec2 key) {
 
 std::vector<CubeData>& World::getChunkData(glm::ivec2 key) {
 	return chunks_.operator[](key)->getCubeData();
+}
+
+float World::getSplineValue(float noise, SplineType type) {
+	std::map<float, float> spline_map;
+	InterpolationType interp;
+
+	switch (type) {
+		case CONTINENT:
+			spline_map = continent_spline_;
+			interp = CUBIC;
+		break;
+		case EROSION:
+			spline_map = erosion_spline_;
+			interp = SMOOTH;
+		break;
+		case PEAK_AND_VALLEY:
+			spline_map = peak_and_valley_spline_;
+			interp = LINEAR;
+		break;
+	}
+
+	auto first = spline_map.begin();
+	auto last = spline_map.rbegin();
+
+	// If noise is at or below the first point
+	if (noise <= first->first) return first->second;
+	// If noise is at or above the last point
+	if (noise >= last->first) return last->second;
+
+	for (auto it = spline_map.begin(); it != spline_map.end(); ++it) {
+		if (noise == it->first) {
+			return it->second;
+		}
+		if (noise < it->first) {
+			// We found the upper bound, get the lower bound
+			auto upper = it;
+			auto lower = --it; // Move back to previous element
+
+			// Get interpolation points
+			float x0 = lower->first, y0 = lower->second;
+			float x1 = upper->first, y1 = upper->second;
+			float t = (noise - x0) / (x1 - x0);
+
+			// Apply different interpolation methods
+			float calculated_value;
+			switch (interp) {
+				case InterpolationType::LINEAR:
+					calculated_value = y0 + t * (y1 - y0);
+				break;
+
+				case InterpolationType::SMOOTH:
+					t = t * t * (3.0f - 2.0f * t);
+				calculated_value = y0 + t * (y1 - y0);
+				break;
+
+				case InterpolationType::CUBIC:
+					t = t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
+				calculated_value = y0 + t * (y1 - y0);
+				break;
+
+				default:
+					calculated_value = y0 + t * (y1 - y0);
+				break;
+			}
+
+			return calculated_value;
+		}
+	}
+
+	// Should never reach here due to edge case handling above
+	return 0.0f;
 }
 
