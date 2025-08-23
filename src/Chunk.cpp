@@ -8,9 +8,7 @@
 #include <array>
 #include <vector>
 
-Chunk::Chunk(std::vector<CubeData> cube_data, World& world, glm::ivec2 chunk_coords) : cube_data_(cube_data), chunk_coords_(chunk_coords) {
-    GenerateFaces(world);
-}
+Chunk::Chunk(std::vector<CubeData> cube_data, World& world, glm::ivec2 chunk_coords) : cube_data_(cube_data), chunk_coords_(chunk_coords) {}
 
 Chunk::~Chunk() {
     VAO1_.Delete();
@@ -216,10 +214,7 @@ void Chunk::BindVAOAttributes() {
 }
 
 void Chunk::RenderChunk() {
-    if (chunk_changed_) {
-        BindVAOAttributes();
-        chunk_changed_ = false;
-    }
+	BindVAOAttributes();
     VAO1_.Bind();
     glDrawElements(GL_TRIANGLES, indices_size, GL_UNSIGNED_INT, 0);
 }

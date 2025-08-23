@@ -24,6 +24,10 @@ public:
     ~Chunk();
 
     std::vector<CubeData>& getCubeData();
+	bool getMeshCreated() {return mesh_created_;}
+	void setMeshCreated(bool mesh_created) {mesh_created_ = mesh_created;}
+
+	void GenerateFaces(World& world);
     void RenderChunk();
 
 private:
@@ -38,13 +42,12 @@ private:
     unsigned int k_chunk_size_z_ = 16;
 
     int indices_size = 0;
-    bool chunk_changed_ = true;
+    bool mesh_created_ = false;
 
     std::vector<CubeData> cube_data_;
     std::vector<unsigned int> indices;
     std::vector<Vertex> vertices;
 
-    void GenerateFaces(World& world);
     void BindVAOAttributes();
     std::vector<unsigned int> AddIndices(unsigned int face_count);
     int CalculateIndex(int x, int y, int z) const;

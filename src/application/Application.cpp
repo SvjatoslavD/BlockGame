@@ -11,7 +11,6 @@ Application::Application(const unsigned int win_width, const unsigned int win_he
 	SetupWindow();
 	renderer_.Setup(this);
 	state_manager_.Setup(this);
-
 }
 
 Application::~Application() = default;

@@ -37,7 +37,7 @@ void Texture::Setup(const std::string& fileName, GLenum texType, GLenum slot, GL
             glBindTexture(texType, 0);
         }
         else if (texType == GL_TEXTURE_2D_ARRAY) {
-            int mip_level_count = 2;
+            int mip_level_count = 4;
             int rows = image_width/ tileSize;
             int cols = image_height/ tileSize;
 

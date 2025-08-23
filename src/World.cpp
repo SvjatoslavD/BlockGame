@@ -59,6 +59,10 @@ void World::Update(glm::ivec2 player_chunk_coords) {
 void World::RenderChunks(Shader& shader, Camera& camera) {
 	for (auto& chunk : chunks_) {
 		// Chunk coords are in x,z format
+		if (!chunk.second->getMeshCreated()) {
+			chunk.second->GenerateFaces(*this);
+			chunk.second->setMeshCreated(true);
+		}
 		glm::vec3 offset = glm::vec3(chunk.first.x * (int)k_chunk_size_x_, 0, chunk.first.y * (int)k_chunk_size_z_);
 		camera.ModelMatrix(shader, "modelMatrix", offset);
 		chunk.second->RenderChunk();
@@ -69,46 +73,74 @@ std::vector<CubeData> World::GenerateChunkData(glm::ivec2 key) {
 	std::vector<CubeData> cube_data_vec;
 	cube_data_vec.reserve(k_chunk_size_x_*k_chunk_size_y_*k_chunk_size_z_);
 
-	FastNoiseLite terrain_noise;
-	terrain_noise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
-	terrain_noise.SetFrequency(0.005f);
-	terrain_noise.SetSeed(0);
+// Multiple noise layers for realistic terrain
+    FastNoiseLite continent_noise, mountain_noise, hill_noise;
 
-	FastNoiseLite mountain_noise;
-	mountain_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	mountain_noise.SetFrequency(0.01f);
-	mountain_noise.SetSeed(0);
+    // Large scale continent shapes
+    continent_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+    continent_noise.SetFrequency(0.003f);
+    continent_noise.SetSeed(seed_);
 
-	glm::fvec2 chunk_coords = glm::fvec2(key);
-	int y_height = 0;
+    // Mountain ridges
+    mountain_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	mountain_noise.SetFractalType(FastNoiseLite::FractalType_Ridged);
+	mountain_noise.SetFractalOctaves(1);
+    mountain_noise.SetFrequency(0.001f);
+    mountain_noise.SetSeed(seed_);
 
-	for (int x = 0; x < k_chunk_size_x_; x++) {
-		for (int z = 0; z < k_chunk_size_z_; z++) {
-			float terrain_noise_value = terrain_noise.GetNoise(chunk_coords.x * 16 + x, chunk_coords.y * 16 + z);
-			int terrain_height = static_cast<int>((terrain_noise_value + 1.0f) * 0.5f * k_chunk_size_y_/8);
+    // Rolling hills
+    hill_noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+    hill_noise.SetFrequency(0.02f);
+    hill_noise.SetSeed(seed_);
 
-			float mountain_noise_val = mountain_noise.GetNoise(chunk_coords.x * 16 + x, chunk_coords.y * 16 + z);
-			int mountain_height = static_cast<int>(pow(((mountain_noise_val + 1.0f) * 0.5f),.3) * (k_chunk_size_y_/8) + 16);
+    glm::fvec2 chunk_coords = glm::fvec2(key);
 
-			y_height = mountain_height + terrain_height;
+    for (int x = 0; x < k_chunk_size_x_; x++) {
+        for (int z = 0; z < k_chunk_size_z_; z++) {
+            float world_x = chunk_coords.x * 16 + x;
+            float world_z = chunk_coords.y * 16 + z;
 
-			for (int y = 0; y < k_chunk_size_y_; y++) {
-				CubeData cube_data{};
-				if (y <= y_height) {
-					cube_data.is_air = false;
+            // Combine multiple noise octaves
+            float continent = continent_noise.GetNoise(world_x, world_z) * 0.3f;
+            float mountain = mountain_noise.GetNoise(world_x, world_z) * 0.5f;
+            float hill = hill_noise.GetNoise(world_x, world_z) * 0.15f;
 
-					if (y == y_height) { cube_data.type = GRASS_BLOCK;}
-					else { cube_data.type = STONE_BLOCK; }
-				}
-				else {
-					cube_data.is_air = true;
-					cube_data.type = DIRT_BLOCK;
-				}
-				cube_data.position = glm::vec3(x, y, z);
-				cube_data_vec.emplace_back(cube_data);
-			}
-		}
-	}
+            // Combine all noise layers
+            float combined_noise = continent + mountain + hill;
+
+            // More natural height mapping
+            int base_height = 32; // Sea level
+            int height_variation = 80; // Max height above sea level
+        	int mountain_height = base_height + height_variation/6;
+            int terrain_height = base_height + static_cast<int>(combined_noise * height_variation);
+
+            // Clamp to chunk bounds
+            terrain_height = std::max(0, std::min(terrain_height,(int)(k_chunk_size_y_ - 1)));
+
+            for (int y = 0; y < k_chunk_size_y_; y++) {
+                CubeData cube_data{};
+                cube_data.position = glm::vec3(x, y, z);
+
+                if (y <= terrain_height) {
+                    cube_data.is_air = false;
+
+                    // Better layer system
+                	if (y >= mountain_height) { cube_data.type = STONE_BLOCK;}
+                	else {
+                		if (y == terrain_height) { cube_data.type = GRASS_BLOCK;}
+                		else if (y >= terrain_height - 3) { cube_data.type = DIRT_BLOCK; }
+                		else { cube_data.type = STONE_BLOCK; }
+                	}
+                }
+            	else {
+                    cube_data.is_air = true;
+                    cube_data.type = DIRT_BLOCK; // Air blocks
+                }
+
+                cube_data_vec.emplace_back(cube_data);
+            }
+        }
+    }
 
 	return cube_data_vec;
 }

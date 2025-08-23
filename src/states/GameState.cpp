@@ -40,6 +40,7 @@ void GameState::Update(sf::Time delta_time) {
 		ImGui::SFML::Update(mouse_pos,display_size,delta_time);
 
 		player_.Update(delta_time.asSeconds(), &our_shader_);
+		world_.Update(player_.getChunkCoordinates());
 	}
 }
 
@@ -47,6 +48,5 @@ void GameState::Draw() {
 	our_shader_.Activate();
 	glActiveTexture(GL_TEXTURE0);
 	test_.Bind();
-	world_.Update(player_.getChunkCoordinates());
 	world_.RenderChunks(our_shader_, *player_.getCamera());
 }
