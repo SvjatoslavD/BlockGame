@@ -6,6 +6,7 @@
 #include "Application.h"
 
 #include "imgui-SFML.h"
+#include "imgui_impl_opengl3.h"
 
 Renderer::Renderer() = default;
 

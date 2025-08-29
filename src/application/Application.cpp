@@ -26,9 +26,10 @@ void Application::SetupWindow() {
 	settings.majorVersion = 3;
 	settings.minorVersion = 3;
 	settings.depthBits = 24;
+	settings.stencilBits = 8;
 
 	// create the window
-	window_.create(sf::VideoMode({ win_width_, win_height_ }), "OpenGL", sf::Style::Default, sf::State::Windowed, settings);
+	window_.create(sf::VideoMode({ win_width_, win_height_ }), "BlockGame", sf::Style::Default, sf::State::Windowed, settings);
 
 	// set window as target of opengl
 	bool active = window_.setActive();

@@ -13,8 +13,8 @@
 
 struct Vertex {
     glm::u16vec3 position;
-    glm::u8vec3 tex_coords;
-    // glm::vec3 normal;
+    glm::u8vec3 tex_coords_and_texture;
+    glm::u8vec3 normal;
 };
 
 class VBO {

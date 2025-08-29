@@ -21,7 +21,7 @@ public:
 
 	glm::vec3 getGlobalCoordinates() const { return position_;};
 	[[nodiscard]] float getHealth() const { return health_;};
-	glm::vec2 getChunkCoordinates() const;
+	glm::vec3 getChunkCoordinates() const;
 	Camera* getCamera() { return &camera_;};
 
 private:

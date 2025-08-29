@@ -20,11 +20,11 @@ enum SolidBlockType;
 
 class Chunk {
 public:
-    Chunk(std::vector<CubeData> cube_data, World& world,glm::ivec2 chunk_coords);
+    Chunk(std::vector<CubeData> cube_data, World& world,glm::ivec3 chunk_coords);
     ~Chunk();
 
     std::vector<CubeData>& getCubeData();
-	bool getMeshCreated() {return mesh_created_;}
+	bool getMeshCreated() const {return mesh_created_;}
 	void setMeshCreated(bool mesh_created) {mesh_created_ = mesh_created;}
 
 	void GenerateFaces(World& world);
@@ -35,12 +35,9 @@ private:
     VBO VBO1_;
     EBO EBO1_;
 
-    glm::vec2 chunk_coords_;
+    glm::ivec3 chunk_coords_;
 
-    unsigned int k_chunk_size_x_ = 16;
-    unsigned int k_chunk_size_y_ = 512;
-    unsigned int k_chunk_size_z_ = 16;
-
+    const unsigned int k_chunk_size_ = 32;
     int indices_size = 0;
     bool mesh_created_ = false;
 

@@ -14,11 +14,11 @@
 struct CubeData;
 enum SplineType;
 
-struct Vec2Less {
-	bool operator()(const glm::ivec2& a, const glm::ivec2& b) const {
-		if (a.x < b.x) return true;
-		if (a.x > b.x) return false;
-		return a.y < b.y;
+struct Vec3Less {
+	bool operator()(const glm::vec3& a, const glm::vec3& b) const {
+		if (a.x != b.x) return a.x < b.x;
+		if (a.y != b.y) return a.y < b.y;
+		return a.z < b.z;
 	}
 };
 
@@ -28,38 +28,37 @@ public:
 	~World();
 
 	void Setup(int seed);
-	bool ChunkExists(glm::ivec2 key);
-	std::vector<CubeData>& getChunkData(glm::ivec2 key);
-	void Update(glm::ivec2 player_chunk_coords);
+	bool ChunkExists(glm::ivec3 key);
+	std::vector<CubeData>& getChunkData(glm::ivec3 key);
+	void Update(glm::ivec3 player_chunk_coords);
 	void RenderChunks(Shader& shader, Camera& camera);
 
 private:
 	int seed_;
-	int render_distance_ = 14;
+	int render_distance_ = 7;
 	bool pause_chunk_loading = true;
 
-	unsigned int k_chunk_size_x_ = 16;
-	unsigned int k_chunk_size_y_ = 512;
-	unsigned int k_chunk_size_z_ = 16;
+	unsigned int k_chunk_size_x_ = 32;
+	unsigned int k_chunk_size_y_ = 32;
+	unsigned int k_chunk_size_z_ = 32;
 
-	glm::ivec2 center_chunk_coords = glm::ivec2(0, 0);
+	glm::ivec3 center_chunk_coords = glm::ivec3(0, 0, 0);
 
-	// the position of the chunk is written in x,z coordinates
-	std::map<glm::ivec2, std::unique_ptr<Chunk>, Vec2Less> chunks_;
+	std::map<glm::ivec3, std::unique_ptr<Chunk>, Vec3Less> chunks_;
 
-	std::vector<CubeData> GenerateChunkData(glm::ivec2 key);
-	void GenerateChunk(glm::ivec2 key);
+	std::vector<CubeData> GenerateChunkData(glm::ivec3 key);
+	void GenerateChunk(glm::ivec3 key);
 
 	FastNoiseLite continent_noise_, erosion_noise_, peak_and_valley_noise_;
-	int sea_level_ = 100;
-	// continent spline turns noise (-1 to 1) to terrain height (0 to 130)
+	int sea_level_ = 10;
+	// continent spline turns noise (-1 to 1) to terrain height (0 to 300)
 	std::map<float, float> continent_spline_;
-	// erosion spline turns noise (-1 to 1) to terrain addition multiplier (0.1 to 1.7)
+	// erosion spline turns noise (-1 to 1) to terrain addition multiplier (0.01 to .95)
 	std::map<float, float> erosion_spline_;
-	// peak and valley spline turns noise (-1 to 1) to terrain height change (-80 to 70)
+	// peak and valley spline turns noise (-1 to 1) to terrain height change (-160 to 100)
 	std::map<float, float> peak_and_valley_spline_;
 
-	float getSplineValue(float noise, SplineType type);
+	float getSplineValue(float noise, SplineType type, float height_noise);
 };
 
 enum SplineType : int{

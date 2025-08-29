@@ -113,11 +113,12 @@ void Player::Update(float delta_time, Shader* our_shader) {
 	camera_.Matrix(50.0f, 0.1f, 1000.f, *our_shader, "cameraMatrix");
 }
 
-glm::vec2 Player::getChunkCoordinates() const {
-	auto out = glm::vec2(0);
+glm::vec3 Player::getChunkCoordinates() const {
+	auto out = glm::vec3(0);
 
-	out.x = floor(position_.x/16);
-	out.y = floor(position_.z/16);
+	out.x = floor(position_.x/32);
+	out.y = floor(position_.y/32);
+	out.z = floor(position_.z/32);
 
 	return out;
 }

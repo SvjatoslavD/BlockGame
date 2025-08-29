@@ -26,7 +26,8 @@ private:
 	void Gameplay();
 
 	Player player_;
-	Shader our_shader_;
+	Shader default_shader_;
+	Shader lighting_shader_;
 	World world_;
 	Texture test_;
 };
