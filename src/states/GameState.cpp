@@ -4,16 +4,16 @@
 
 #include "GameState.h"
 
+#include "../world/World.h"
 #include "Application.h"
 #include "Texture.h"
-#include "World.h"
 #include "imgui-SFML.h"
 #include "imgui.h"
 
 GameState::GameState(StateManager* state_manager, Application* application) :
 	DefaultState(state_manager, application) {
 
-	default_shader_.Setup("../../resources/shaders/default.vert", "../../resources/shaders/default.frag");
+	default_shader_.Setup("../../assets/shaders/default.vert", "../../assets/shaders/default.frag");
 	world_.Setup(6);
 	test_.Setup("../../assets/images/tile-map.png", GL_TEXTURE_2D_ARRAY, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 16);
 	test_.TexUnit(default_shader_, "TextureArray1", 0);

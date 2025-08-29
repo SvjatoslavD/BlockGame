@@ -4,12 +4,17 @@
 
 #include "Application.h"
 
+#include <GL/glew.h>
+#include <SFML/Graphics/Rect.hpp>
+
+#include <iostream>
+
 
 Application::Application(const unsigned int win_width, const unsigned int win_height, unsigned int target_fps):
 	win_width_(win_width), win_height_(win_height), render_delta_time_(1.f/static_cast<float>(target_fps)) {
 	// initialize members
 	SetupWindow();
-	renderer_.Setup(this);
+	renderer_.Setup(&window_);
 	state_manager_.Setup(this);
 }
 

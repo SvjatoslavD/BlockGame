@@ -5,8 +5,8 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window.hpp>
+#include <../../cmake-build-debug-visual-studio/vcpkg_installed/x64-windows/include/SFML/Graphics/RenderWindow.hpp>
+#include <../../cmake-build-debug-visual-studio/vcpkg_installed/x64-windows/include/SFML/Window.hpp>
 
 class Application;
 
@@ -15,7 +15,7 @@ public:
 	Renderer();
 	~Renderer();
 
-	void Setup(Application* application);
+	void Setup(sf::Window* window);
 	bool isSetup() const {return is_setup_;}
 	void Clear();
 	void Display();
@@ -23,8 +23,7 @@ public:
 private:
 	bool is_setup_ = false;
 
-	Application* application_= nullptr;
-	sf::Window* window_ = nullptr;
+	sf::Window* window_;
 };
 
 

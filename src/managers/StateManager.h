@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stack>
 
-#include "Renderer.h"
+#include "../rendering/Renderer.h"
 
 class Application;
 class DefaultState;

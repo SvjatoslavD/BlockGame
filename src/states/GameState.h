@@ -5,10 +5,10 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+#include "../world/World.h"
 #include "DefaultState.h"
 #include "Player.h"
 #include "Texture.h"
-#include "World.h"
 
 class StateManager;
 class Application;

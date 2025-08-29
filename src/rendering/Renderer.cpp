@@ -2,20 +2,19 @@
 // Created by svjat on 8/14/2025.
 //
 
-#include "Renderer.h"
-#include "Application.h"
+#include "rendering/Renderer.h"
+#include "core/Application.h"
+#include "gl/glew.h"
 
 #include "imgui-SFML.h"
-#include "imgui_impl_opengl3.h"
 
 Renderer::Renderer() = default;
 
 Renderer::~Renderer() {
 };
 
-void Renderer::Setup(Application* application) {
-	application_ = application;
-	window_ = application_->getWindow();
+void Renderer::Setup(sf::Window* window) {
+	window_ = window;
 
 	bool imgui_sfml_init = ImGui::SFML::Init(*window_,static_cast<sf::Vector2f>(window_->getSize()));
 	if (!imgui_sfml_init) {

@@ -7,8 +7,8 @@
 
 #include <map>
 #include "FastNoiseLite.h"
+#include "rendering/Camera.h"
 #include "Tilemap.h"
-#include "Camera.h"
 #include "Chunk.h"
 
 struct CubeData;
@@ -35,7 +35,7 @@ public:
 
 private:
 	int seed_;
-	int render_distance_ = 7;
+	int render_distance_ = 6;
 	bool pause_chunk_loading = true;
 
 	unsigned int k_chunk_size_x_ = 32;
@@ -50,7 +50,7 @@ private:
 	void GenerateChunk(glm::ivec3 key);
 
 	FastNoiseLite continent_noise_, erosion_noise_, peak_and_valley_noise_;
-	int sea_level_ = 10;
+	int sea_level_ = 0;
 	// continent spline turns noise (-1 to 1) to terrain height (0 to 300)
 	std::map<float, float> continent_spline_;
 	// erosion spline turns noise (-1 to 1) to terrain addition multiplier (0.01 to .95)

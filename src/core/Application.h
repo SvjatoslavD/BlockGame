@@ -5,13 +5,10 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <GL/glew.h>
-#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Window.hpp>
-#include <iostream>
 
-#include "Renderer.h"
-#include "StateManager.h"
+#include "rendering/Renderer.h"
+#include "managers/StateManager.h"
 
 class Application {
 public:
@@ -19,11 +16,11 @@ public:
 	~Application();
 
 	void StartApplication();
-	void EndApplication() {is_running_ = false;};
+	void EndApplication() {is_running_ = false;}
 
-	[[nodiscard]] sf::Vector2u getWindowSize() const { return window_.getSize();};
-	sf::Window* getWindow() {return &window_;};
-	Renderer* getRenderer() {return &renderer_;};
+	[[nodiscard]] sf::Vector2u getWindowSize() const { return window_.getSize();}
+	sf::Window* getWindow() {return &window_;}
+	Renderer* getRenderer() {return &renderer_;}
 
 private:
 	bool is_running_ = true;
