@@ -6,13 +6,11 @@
 #define WORLD_H
 
 #include <map>
-#include "FastNoiseLite.h"
 #include "rendering/Camera.h"
-#include "Tilemap.h"
-#include "Chunk.h"
+#include "world/Chunk.h"
+#include "world/WorldGeneration.h"
 
 struct CubeData;
-enum SplineType;
 
 struct Vec3Less {
 	bool operator()(const glm::vec3& a, const glm::vec3& b) const {
@@ -35,7 +33,7 @@ public:
 
 private:
 	int seed_;
-	int render_distance_ = 6;
+	int render_distance_ = 1;
 	bool pause_chunk_loading = true;
 
 	unsigned int k_chunk_size_x_ = 32;
@@ -46,31 +44,10 @@ private:
 
 	std::map<glm::ivec3, std::unique_ptr<Chunk>, Vec3Less> chunks_;
 
-	std::vector<CubeData> GenerateChunkData(glm::ivec3 key);
 	void GenerateChunk(glm::ivec3 key);
 
-	FastNoiseLite continent_noise_, erosion_noise_, peak_and_valley_noise_;
-	int sea_level_ = 0;
-	// continent spline turns noise (-1 to 1) to terrain height (0 to 300)
-	std::map<float, float> continent_spline_;
-	// erosion spline turns noise (-1 to 1) to terrain addition multiplier (0.01 to .95)
-	std::map<float, float> erosion_spline_;
-	// peak and valley spline turns noise (-1 to 1) to terrain height change (-160 to 100)
-	std::map<float, float> peak_and_valley_spline_;
-
-	float getSplineValue(float noise, SplineType type, float height_noise);
+	WorldGeneration world_generation_;
 };
 
-enum SplineType : int{
-	CONTINENT = 0,
-	EROSION,
-	PEAK_AND_VALLEY,
-};
-
-enum InterpolationType : int{
-	LINEAR = 0,
-	SMOOTH,
-	CUBIC,
-};
 
 #endif //WORLD_H

@@ -10,12 +10,7 @@
 #include <glm/vec3.hpp>
 #include <vector>
 #include <glm/fwd.hpp>
-
-struct Vertex {
-    glm::u16vec3 position;
-    glm::u8vec3 tex_coords_and_texture;
-    glm::u8vec3 normal;
-};
+#include "world/Cube.h"
 
 class VBO {
 public:
