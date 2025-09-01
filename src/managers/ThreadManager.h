@@ -29,7 +29,7 @@ struct Task {
 
 class ThreadManager {
 public:
-	explicit ThreadManager(size_t num_threads = std::thread::hardware_concurrency() - 1); // keep one thread for general OS use
+	explicit ThreadManager(size_t num_threads = std::thread::hardware_concurrency() - 2); // keep one thread for general OS use
 	~ThreadManager() = default;
 
 	void Shutdown();

@@ -16,8 +16,8 @@ void World::Setup(int seed, ThreadManager* thread_manager) {
 	world_generation_.setSeed(seed_);
 
 	// load starting chunks into queue
-	for (int x = -render_distance_; x <= render_distance_; x++) {
-		for (int y = -1; y <= 8; y++) {
+	for (int y = -1; y <= 8; y++) {
+		for (int x = -render_distance_; x <= render_distance_; x++) {
 			for (int z = -render_distance_; z <= render_distance_; z++) {
 				GenerateChunk(glm::ivec3(x,y,z));
 			}
@@ -30,14 +30,13 @@ World::~World() {
 
 void World::Update(glm::ivec3 player_chunk_coords) {
 	if (player_chunk_coords != center_chunk_coords && !pause_chunk_loading) {
-		glm::ivec3 difference = player_chunk_coords - center_chunk_coords;
-
 		// deloads all chunks not in render distance
 		std::vector<glm::ivec3> chunks_to_erase;
 
 		for (auto& chunk : chunks_) {
-			if (abs(chunk.first.x - center_chunk_coords.x) > render_distance_ + abs(difference.x)
-				|| abs(chunk.first.y - center_chunk_coords.y) > render_distance_ + abs(difference.y)) {
+			if (abs(chunk.first.x - center_chunk_coords.x) > render_distance_
+				|| abs(chunk.first.y - center_chunk_coords.y) > render_distance_
+				|| abs(chunk.first.z - center_chunk_coords.z) > render_distance_) {
 				chunks_to_erase.push_back(chunk.first);
 			}
 		}

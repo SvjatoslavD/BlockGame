@@ -6,10 +6,9 @@
 #define GAME_H
 
 #include <SFML/Window/Window.hpp>
-#include <iostream>
 #include <stack>
 
-#include "../rendering/Renderer.h"
+#include "rendering/Renderer.h"
 
 class Application;
 class DefaultState;

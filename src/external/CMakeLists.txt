@@ -51,7 +51,7 @@ target_include_directories(fast-noise-lite INTERFACE FastNoiseLite)
 add_library(external-libs INTERFACE)
 target_link_libraries(external-libs INTERFACE
         GLEW::GLEW
-        SFML::Network SFML::Graphics SFML::Window SFML::Audio SFML::System
+        SFML::Network SFML::Window SFML::Audio SFML::System
         glm::glm
         imgui-sfml
         fast-noise-lite

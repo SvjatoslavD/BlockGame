@@ -287,12 +287,14 @@ void ChunkMesh::FreeGPUResources() {
 }
 
 void ChunkMesh::RenderOpaque() {
-	if (gl_mesh_.uploaded == false) {
-		UploadToGPU();
-		gl_mesh_.uploaded = true;
+	if (!mesh_data_.indices.empty()) {
+		if (gl_mesh_.uploaded == false) {
+			UploadToGPU();
+			gl_mesh_.uploaded = true;
+		}
+		gl_mesh_.vao.Bind();
+		glDrawElements(GL_TRIANGLES, mesh_data_.indices.size(), GL_UNSIGNED_INT, 0);
 	}
-	gl_mesh_.vao.Bind();
-	glDrawElements(GL_TRIANGLES, mesh_data_.indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 

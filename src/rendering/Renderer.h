@@ -5,8 +5,8 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <../../cmake-build-debug-visual-studio/vcpkg_installed/x64-windows/include/SFML/Graphics/RenderWindow.hpp>
-#include <../../cmake-build-debug-visual-studio/vcpkg_installed/x64-windows/include/SFML/Window.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window.hpp>
 
 class Application;
 

@@ -4,6 +4,8 @@
 
 #include "TitleState.h"
 
+#include <iostream>
+
 #include "Application.h"
 #include "imgui-SFML.h"
 #include "imgui.h"

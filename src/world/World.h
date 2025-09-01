@@ -38,7 +38,7 @@ public:
 
 private:
 	int seed_;
-	int render_distance_ = 9;
+	int render_distance_ = 12;
 	bool pause_chunk_loading = true;
 
 	unsigned int k_chunk_size_x_ = 32;

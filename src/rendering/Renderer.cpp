@@ -3,6 +3,9 @@
 //
 
 #include "rendering/Renderer.h"
+
+#include <iostream>
+
 #include "core/Application.h"
 #include "gl/glew.h"
 
