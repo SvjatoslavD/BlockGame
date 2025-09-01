@@ -17,7 +17,12 @@ public:
 	~Application();
 
 	void StartApplication();
-	void EndApplication() {is_running_ = false;}
+	void EndApplication() {
+		is_running_ = false;
+
+		thread_manager_.Shutdown();
+		sleep(sf::milliseconds(100));
+	}
 
 	[[nodiscard]] sf::Vector2u getWindowSize() const { return window_.getSize();}
 	sf::Window* getWindow() {return &window_;}

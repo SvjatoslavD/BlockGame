@@ -18,7 +18,9 @@ void ThreadManager::SetupThreads(WorldGeneration& world_generation, World& world
 }
 
 void ThreadManager::QueueChunkLoad(glm::ivec3 chunk_coords, int priority) {
+	std::unique_lock lock(task_queue_mutex_);
 	tasks_.emplace(Task(TaskType::CHUNK_LOAD,priority,chunk_coords));
+	lock.unlock();
 }
 
 std::vector<std::unique_ptr<Chunk>> ThreadManager::getCompletedChunks() {

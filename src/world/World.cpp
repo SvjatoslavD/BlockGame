@@ -17,7 +17,7 @@ void World::Setup(int seed, ThreadManager* thread_manager) {
 
 	// load starting chunks into queue
 	for (int x = -render_distance_; x <= render_distance_; x++) {
-		for (int y = -1; y <= render_distance_; y++) {
+		for (int y = -1; y <= 8; y++) {
 			for (int z = -render_distance_; z <= render_distance_; z++) {
 				GenerateChunk(glm::ivec3(x,y,z));
 			}

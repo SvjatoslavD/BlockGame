@@ -17,7 +17,7 @@ GameState::GameState(StateManager* state_manager, Application* application) :
 	world_.Setup(1, application_->getThreadManager());
 	test_.Setup("../../assets/images/tile-map.png", GL_TEXTURE_2D_ARRAY, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 16);
 	test_.TexUnit(default_shader_, "TextureArray1", 0);
-	player_.Setup(application, 10.f, glm::vec3(0,150,0));
+	player_.Setup(application, 10.f, glm::vec3(0,100,0));
 	application_->getThreadManager()->SetupThreads(world_.getWorldGeneration(),world_);
 }
 
