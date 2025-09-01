@@ -13,6 +13,7 @@ public:
     GLuint ID;
     EBO();
 
+	void GenerateID();
     void SetData(std::vector<unsigned int>& indices);
     void Bind();
     void Unbind();

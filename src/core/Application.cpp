@@ -5,9 +5,8 @@
 #include "Application.h"
 
 #include <GL/glew.h>
-#include <SFML/Graphics/Rect.hpp>
-
 #include <iostream>
+
 
 
 Application::Application(const unsigned int win_width, const unsigned int win_height, unsigned int target_fps):
@@ -21,17 +20,18 @@ Application::Application(const unsigned int win_width, const unsigned int win_he
 Application::~Application() = default;
 
 void Application::StartApplication() {
-	state_manager_.PushState(Lookup::TitleState);
+	state_manager_.PushState(Lookup::GameState);
 	GameLoop();
 }
 
 void Application::SetupWindow() {
 	// load variables needed for the creation of the window
 	sf::ContextSettings settings;
-	settings.majorVersion = 3;
-	settings.minorVersion = 3;
+	settings.majorVersion = 4;
+	settings.minorVersion = 1;
 	settings.depthBits = 24;
 	settings.stencilBits = 8;
+	settings.attributeFlags = sf::ContextSettings::Core;
 
 	// create the window
 	window_.create(sf::VideoMode({ win_width_, win_height_ }), "BlockGame", sf::Style::Default, sf::State::Windowed, settings);

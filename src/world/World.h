@@ -6,11 +6,14 @@
 #define WORLD_H
 
 #include <map>
+
+#include "ThreadManager.h"
 #include "rendering/Camera.h"
 #include "world/Chunk.h"
 #include "world/WorldGeneration.h"
 
 struct CubeData;
+class ThreadManager;
 
 struct Vec3Less {
 	bool operator()(const glm::vec3& a, const glm::vec3& b) const {
@@ -25,15 +28,17 @@ public:
 	World() = default;
 	~World();
 
-	void Setup(int seed);
+	void Setup(int seed, ThreadManager* thread_manager);
 	bool ChunkExists(glm::ivec3 key);
 	std::vector<CubeData>& getChunkData(glm::ivec3 key);
 	void Update(glm::ivec3 player_chunk_coords);
 	void RenderChunks(Shader& shader, Camera& camera);
 
+	WorldGeneration& getWorldGeneration() {return world_generation_;};
+
 private:
 	int seed_;
-	int render_distance_ = 1;
+	int render_distance_ = 12;
 	bool pause_chunk_loading = true;
 
 	unsigned int k_chunk_size_x_ = 32;
@@ -47,6 +52,7 @@ private:
 	void GenerateChunk(glm::ivec3 key);
 
 	WorldGeneration world_generation_;
+	ThreadManager* thread_manager_;
 };
 
 

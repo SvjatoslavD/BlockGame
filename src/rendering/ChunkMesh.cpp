@@ -239,6 +239,7 @@ void ChunkMesh::GenerateMeshData(glm::ivec3 chunk_pos, World* world, std::vector
         }
     }
     AddIndices();
+	mesh_data_generated_ = true;
 }
 
 int ChunkMesh::CalculateIndex(const int x, const int y, const int z) const {
@@ -258,6 +259,10 @@ void ChunkMesh::AddIndices() {
 }
 
 void ChunkMesh::UploadToGPU() {
+	gl_mesh_.vao.GenerateID();
+	gl_mesh_.vbo.GenerateID();
+	gl_mesh_.ebo.GenerateID();
+
 	gl_mesh_.vao.Bind();
 
 	gl_mesh_.vbo.SetData(mesh_data_.vertices);

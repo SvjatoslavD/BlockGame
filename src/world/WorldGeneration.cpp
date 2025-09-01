@@ -4,24 +4,29 @@
 
 #include "WorldGeneration.h"
 #include "Tilemap.h"
+#include "Chunk.h"
 
+void WorldGeneration::setSeed(int seed) {
+	seed_ = seed;
+
+	continent_noise_.SetSeed(seed_);
+	erosion_noise_.SetSeed(seed_);
+	peak_and_valley_noise_.SetSeed(seed_);
+}
 WorldGeneration::WorldGeneration() {
 	// Large scale continent shapes
 	continent_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	continent_noise_.SetFrequency(0.002f);
-	continent_noise_.SetSeed(seed_);
 
 	// Erosion noise
 	erosion_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
 	erosion_noise_.SetFrequency(0.002f);
-	erosion_noise_.SetSeed(seed_);
 
 	// Peaks and valley noise
 	peak_and_valley_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
 	peak_and_valley_noise_.SetFrequency(0.004f);
 	peak_and_valley_noise_.SetFractalType(FastNoiseLite::FractalType_Ridged);
 	peak_and_valley_noise_.SetFractalOctaves(1);
-	peak_and_valley_noise_.SetSeed(seed_);
 
 	continent_spline_.insert({
 		{-1,0},{-0.8,20},{-0.75,50},{-0.5,100},{-0.3,130},
@@ -37,7 +42,9 @@ WorldGeneration::WorldGeneration() {
 	});
 }
 
-std::vector<CubeData> WorldGeneration::GenerateChunkData(glm::ivec3 chunk_pos) {
+
+ChunkData WorldGeneration::GenerateChunkData(glm::ivec3 chunk_pos) {
+	ChunkMetaData meta_data;
 	std::vector<CubeData> cube_data_vec;
 	cube_data_vec.reserve(k_chunk_size_x_*k_chunk_size_y_*k_chunk_size_z_);
 
@@ -76,13 +83,19 @@ std::vector<CubeData> WorldGeneration::GenerateChunkData(glm::ivec3 chunk_pos) {
     					else if (true_y >= combined_noise - 3) {cube_data.type = DIRT_BLOCK;}
     					else {cube_data.type = STONE_BLOCK;}
     				}
+
+    				meta_data.solid_block_count++;
     			}
     			else if (true_y > combined_noise && true_y < sea_level_) {
     				cube_data.type = SAND_BLOCK;
+
+    				meta_data.solid_block_count++;
     			}
     			else {
     				cube_data.is_air = true;
     				cube_data.type = DIRT_BLOCK; // Air blocks
+
+    				meta_data.air_count++;
     			}
 
     			cube_data_vec.emplace_back(cube_data);
@@ -91,7 +104,10 @@ std::vector<CubeData> WorldGeneration::GenerateChunkData(glm::ivec3 chunk_pos) {
     	}
     }
 
-	return cube_data_vec;
+	meta_data.CalculateFlags();
+
+	auto chunk_data = ChunkData(chunk_coords,meta_data,cube_data_vec);
+	return chunk_data;
 }
 
 float WorldGeneration::getSplineValue(float noise, SplineType type, float height_noise) {

@@ -4,8 +4,10 @@
 
 #include "VAO.h"
 
-VAO::VAO() {
-    glGenVertexArrays(1, &ID);
+VAO::VAO() {}
+
+void VAO::GenerateID() {
+	glGenVertexArrays(1, &ID);
 }
 
 void VAO::LinkAttrib(GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset) {

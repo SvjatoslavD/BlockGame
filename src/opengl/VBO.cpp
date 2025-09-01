@@ -4,8 +4,10 @@
 
 #include "VBO.h"
 
-VBO::VBO() {
-    glGenBuffers(1, &ID);
+VBO::VBO() {}
+
+void VBO::GenerateID() {
+	glGenBuffers(1, &ID);
 }
 
 void VBO::SetData(std::vector<Vertex>& vertices) {

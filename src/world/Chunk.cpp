@@ -5,20 +5,20 @@
 #include "Chunk.h"
 #include "World.h"
 
-#include <array>
 #include <utility>
 #include <vector>
 
-Chunk::Chunk(std::vector<CubeData> cube_data, glm::ivec3 chunk_coords, World& world) :
-	cube_data_(std::move(cube_data)), chunk_coords_(chunk_coords) {
-	chunk_mesh_.GenerateMeshData(chunk_coords_, &world,cube_data_);
-}
+Chunk::Chunk(ChunkData& data, World& world) :
+	chunk_data_(data), world_(&world) {}
 
 Chunk::~Chunk() {
-    cube_data_.clear();
+    chunk_data_.cube_data.clear();
 }
 
 void Chunk::RenderChunk() {
+	if (chunk_mesh_.mesh_data_generated_ == false) {
+		chunk_mesh_.GenerateMeshData(chunk_data_.chunk_coords, world_,chunk_data_.cube_data);
+	}
 	chunk_mesh_.RenderOpaque();
 }
 
@@ -27,5 +27,5 @@ int Chunk::CalculateIndex(const int x, const int y, const int z) const {
 }
 
 std::vector<CubeData>& Chunk::getCubeData() {
-    return cube_data_;
+    return chunk_data_.cube_data;
 }

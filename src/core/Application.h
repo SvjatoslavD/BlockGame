@@ -7,8 +7,9 @@
 
 #include <SFML/Window.hpp>
 
-#include "rendering/Renderer.h"
+#include "ThreadManager.h"
 #include "managers/StateManager.h"
+#include "rendering/Renderer.h"
 
 class Application {
 public:
@@ -21,6 +22,7 @@ public:
 	[[nodiscard]] sf::Vector2u getWindowSize() const { return window_.getSize();}
 	sf::Window* getWindow() {return &window_;}
 	Renderer* getRenderer() {return &renderer_;}
+	ThreadManager* getThreadManager() {return &thread_manager_;}
 
 private:
 	bool is_running_ = true;
@@ -32,9 +34,9 @@ private:
 	void SetupWindow();
 
 	StateManager state_manager_;
-	// ThreadManager thread_manager_;
-	Renderer renderer_;
+	ThreadManager thread_manager_;
 	// ResourceManager resource_manager_;
+	Renderer renderer_;
 	sf::Window window_;
 };
 

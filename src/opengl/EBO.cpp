@@ -4,8 +4,10 @@
 
 #include "EBO.h"
 
-EBO::EBO() {
-    glGenBuffers(1, &ID);
+EBO::EBO() {}
+
+void EBO::GenerateID() {
+	glGenBuffers(1, &ID);
 }
 
 void EBO::SetData(std::vector<unsigned int>& indices) {

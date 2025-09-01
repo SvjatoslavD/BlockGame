@@ -22,13 +22,15 @@ enum InterpolationType : int{
 	CUBIC,
 };
 
+struct ChunkData;
+
 class WorldGeneration {
 public:
 	WorldGeneration();
 	~WorldGeneration() = default;
 
-	void setSeed(int seed) {seed_ = seed;};
-	std::vector<CubeData> GenerateChunkData(glm::ivec3 chunk_pos);
+	void setSeed(int seed);
+	ChunkData GenerateChunkData(glm::ivec3 chunk_pos);
 
 private:
 	int seed_;

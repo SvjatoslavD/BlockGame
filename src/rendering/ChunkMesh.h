@@ -52,6 +52,8 @@ public:
     void RenderOpaque();
     void RenderTransparent() const;
 
+	bool mesh_data_generated_ = false;
+
 private:
 	int k_chunk_size_ = 32;
 

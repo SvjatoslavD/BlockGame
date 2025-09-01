@@ -16,8 +16,8 @@ class VBO {
 public:
     GLuint ID;
     VBO();
-    explicit VBO(std::vector<Vertex>& vertices);
 
+	void GenerateID();
     void SetData(std::vector<Vertex>& vertices);
     void Bind();
     void Unbind();

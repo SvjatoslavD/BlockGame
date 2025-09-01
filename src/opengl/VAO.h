@@ -12,6 +12,7 @@ public:
     GLuint ID;
     VAO();
 
+	void GenerateID();
     void LinkAttrib(GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
     void Bind();
     void Unbind();

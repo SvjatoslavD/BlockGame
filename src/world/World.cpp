@@ -9,8 +9,9 @@
 
 #include "Chunk.h"
 
-void World::Setup(int seed) {
+void World::Setup(int seed, ThreadManager* thread_manager) {
 	seed_ = seed;
+	thread_manager_ = thread_manager;
 
 	world_generation_.setSeed(seed_);
 
@@ -45,7 +46,7 @@ void World::Update(glm::ivec3 player_chunk_coords) {
 			chunks_.erase(chunk);
 		}
 
-		// loads chunks which should be in render distance
+		// queue chunks which should be in render distance
 		std::vector<glm::ivec3> chunks_to_create;
 
 		for (int x = -render_distance_ + center_chunk_coords.x; x <= render_distance_ + center_chunk_coords.x; x++) {
@@ -64,6 +65,11 @@ void World::Update(glm::ivec3 player_chunk_coords) {
 
 		center_chunk_coords = player_chunk_coords;
 	}
+
+	auto completed_chunks = thread_manager_->getCompletedChunks();
+	for (auto& chunk : completed_chunks) {
+		chunks_.emplace(chunk->getChunkCoords(), std::move(chunk));
+	}
 }
 
 void World::RenderChunks(Shader& shader, Camera& camera) {
@@ -77,9 +83,7 @@ void World::RenderChunks(Shader& shader, Camera& camera) {
 
 void World::GenerateChunk(glm::ivec3 key) {
 	if (chunks_.find(key) == chunks_.end()) {
-		std::vector<CubeData> data = world_generation_.GenerateChunkData(key);
-		auto chunk = std::make_unique<Chunk>(data, key, *this);
-		chunks_.emplace(key, std::move(chunk));
+		thread_manager_->QueueChunkLoad(key, 1);
 	}
 }
 

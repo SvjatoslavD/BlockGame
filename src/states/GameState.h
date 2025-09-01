@@ -15,7 +15,7 @@ class Application;
 
 class GameState : public DefaultState {
 public:
-	explicit GameState(StateManager* state_manager, Application* application);
+	GameState(StateManager* state_manager, Application* application);
 
 	void HandleInput(sf::Event& event) override;
 	void Update(sf::Time delta_time) override;

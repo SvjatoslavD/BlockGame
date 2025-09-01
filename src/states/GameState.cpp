@@ -14,10 +14,11 @@ GameState::GameState(StateManager* state_manager, Application* application) :
 	DefaultState(state_manager, application) {
 
 	default_shader_.Setup("../../assets/shaders/default.vert", "../../assets/shaders/default.frag");
-	world_.Setup(6);
+	world_.Setup(1, application_->getThreadManager());
 	test_.Setup("../../assets/images/tile-map.png", GL_TEXTURE_2D_ARRAY, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 16);
 	test_.TexUnit(default_shader_, "TextureArray1", 0);
 	player_.Setup(application, 10.f, glm::vec3(0,150,0));
+	application_->getThreadManager()->SetupThreads(world_.getWorldGeneration(),world_);
 }
 
 void GameState::HandleInput(sf::Event& event) {
