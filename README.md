@@ -53,7 +53,7 @@ BlockGame is a solo-developed voxel engine that recreates the core mechanics of 
 
 This project was developed using Agile methodology with Jira for task management:
 
-![Jira Kanban Board Screenshot]
+![Jira Kanban Board Screenshot](assets\branding\kanban_screenshot.png)
 
 ## 🎓 Learning Resources
 
