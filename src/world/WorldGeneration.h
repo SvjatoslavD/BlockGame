@@ -39,7 +39,7 @@ private:
 	unsigned int k_chunk_size_y_ = 32;
 	unsigned int k_chunk_size_z_ = 32;
 
-	FastNoiseLite continent_noise_, erosion_noise_, peak_and_valley_noise_;
+	FastNoiseLite continent_noise_, erosion_noise_, peak_and_valley_noise_, cave_noise_, cave_intersect_noise_;
 	int sea_level_ = 0;
 	// continent spline turns noise (-1 to 1) to terrain height (0 to 300)
 	std::map<float, float> continent_spline_;

@@ -12,6 +12,8 @@ void WorldGeneration::setSeed(int seed) {
 	continent_noise_.SetSeed(seed_);
 	erosion_noise_.SetSeed(seed_);
 	peak_and_valley_noise_.SetSeed(seed_);
+	cave_noise_.SetSeed(seed_);
+	cave_intersect_noise_.SetSeed(seed_ );
 }
 WorldGeneration::WorldGeneration() {
 	// Large scale continent shapes
@@ -24,9 +26,19 @@ WorldGeneration::WorldGeneration() {
 
 	// Peaks and valley noise
 	peak_and_valley_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-	peak_and_valley_noise_.SetFrequency(0.004f);
+	peak_and_valley_noise_.SetFrequency(0.005f);
 	peak_and_valley_noise_.SetFractalType(FastNoiseLite::FractalType_Ridged);
 	peak_and_valley_noise_.SetFractalOctaves(1);
+
+	cave_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+	cave_noise_.SetFrequency(0.004f);
+	cave_noise_.SetDomainWarpType(FastNoiseLite::DomainWarpType_OpenSimplex2);
+	cave_noise_.SetDomainWarpAmp(80);
+
+	cave_intersect_noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+	cave_intersect_noise_.SetFrequency(0.004f);
+	cave_intersect_noise_.SetDomainWarpType(FastNoiseLite::DomainWarpType_BasicGrid);
+	cave_intersect_noise_.SetDomainWarpAmp(80);
 
 	continent_spline_.insert({
 		{-1,0},{-0.8,20},{-0.75,50},{-0.5,100},{-0.3,130},
@@ -72,6 +84,9 @@ ChunkData WorldGeneration::GenerateChunkData(glm::ivec3 chunk_pos) {
 
     		for (int y = 0; y < k_chunk_size_y_; y++) {
     			int true_y = y + y_offset;
+    			float cave_noise = cave_noise_.GetNoise(world_x, world_z, (float)true_y);
+    			float cave_intersect_noise = cave_intersect_noise_.GetNoise(world_x+64.f, world_z, (float)true_y+64.f);
+
     			CubeData cube_data{};
     			cube_data.position = glm::vec3(x, y, z);
 
@@ -84,13 +99,20 @@ ChunkData WorldGeneration::GenerateChunkData(glm::ivec3 chunk_pos) {
     					else {cube_data.type = STONE_BLOCK;}
     				}
 
-    				meta_data.solid_block_count++;
+    				if ((pow(cave_noise,2) + pow(cave_intersect_noise,2))< 0.001 && true_y < 96) {
+    					cube_data.is_air = true;
+    					meta_data.air_count++;
+    				}
+    				else {
+    					meta_data.solid_block_count++;
+    				}
     			}
-    			else if (true_y > combined_noise && true_y < sea_level_) {
-    				cube_data.type = SAND_BLOCK;
-
-    				meta_data.solid_block_count++;
-    			}
+    			// simulate where water would be
+    			// else if (true_y > combined_noise && true_y < sea_level_) {
+    			// 	cube_data.type = SAND_BLOCK;
+			    //
+    			// 	meta_data.solid_block_count++;
+    			// }
     			else {
     				cube_data.is_air = true;
     				cube_data.type = DIRT_BLOCK; // Air blocks

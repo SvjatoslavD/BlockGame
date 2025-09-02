@@ -1,12 +1,14 @@
 # BlockGame
 
-A Minecraft-inspired voxel engine built from scratch using C++, SFML, and OpenGL. This project demonstrates advanced graphics programming, multithreaded architecture, and real-time 3D world generation.
+A Minecraft-inspired voxel engine built from scratch using C++, SFML, and OpenGL. This project is the first time that I have worked with advanced graphics programming, multithreaded architecture, and real-time 3D world generation.
 
 ![In-game Screenshot](assets/branding/ingame_screenshot.png)
 
 ## 🎯 Project Overview
 
 BlockGame is a solo-developed voxel engine that recreates the core mechanics of Minecraft while exploring modern game engine architecture patterns. The project emphasizes performance optimization, clean code architecture, and real-time world streaming.
+
+Status: Ongoing
 
 ## 🔧 Technology Stack
 
