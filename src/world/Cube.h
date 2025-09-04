@@ -9,9 +9,10 @@
 #include "Tilemap.h"
 
 struct Vertex {
-	glm::u16vec3 position;
+	glm::u8vec3 position;
 	glm::u8vec3 tex_coords_and_texture;
-	glm::u8vec3 normal;
+	glm::u8 normal;
+	glm::u8 ambient_occlusion;
 };
 
 struct CubeData {
@@ -19,6 +20,8 @@ struct CubeData {
 	glm::vec3 position;
 	SolidBlockType type;
 };
+
+extern std::array<Vertex, 24> DefaultCubeData;
 
 class Cube {
 

@@ -16,8 +16,10 @@ Chunk::~Chunk() {
 }
 
 void Chunk::RenderChunk() {
+	chunk_mesh_.CheckNearbyChunks(chunk_data_.chunk_coords, world_);
 	if (chunk_mesh_.mesh_data_generated_ == false) {
-		chunk_mesh_.GenerateMeshData(chunk_data_.chunk_coords, world_,chunk_data_.cube_data);
+		chunk_mesh_.GenerateMeshData(chunk_data_.cube_data);
+		chunk_mesh_.mesh_data_generated_ = true;
 	}
 	chunk_mesh_.RenderOpaque();
 }

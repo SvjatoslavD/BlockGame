@@ -29,14 +29,14 @@ struct Block {
 		}
 	}
 	Block(BlockFace top_face, BlockFace bottom_face, BlockFace side_face) {
-		faces[0] = top_face;
-		faces[1] = bottom_face;
+		faces[0] = bottom_face;
+		faces[1] = top_face;
 		for (int i = 2; i < 6; ++i)
 			faces[i] = side_face;
 	}
 	Block(BlockFace top_face, BlockFace bottom_face, BlockFace left_face, BlockFace right_face, BlockFace front_face, BlockFace back_face) {
-		faces[0] = top_face;
-		faces[1] = bottom_face;
+		faces[0] = bottom_face;
+		faces[1] = top_face;
 		faces[2] = left_face;
 		faces[3] = right_face;
 		faces[4] = front_face;
