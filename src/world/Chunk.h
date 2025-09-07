@@ -43,6 +43,7 @@ public:
 
     std::vector<CubeData>& getCubeData();
 
+	void GenerateMainMesh();
     void RenderChunk();
 	void setChunkData(ChunkData& data) {chunk_data_ = data;}
 	glm::ivec3 getChunkCoords() const { return chunk_data_.chunk_coords; };

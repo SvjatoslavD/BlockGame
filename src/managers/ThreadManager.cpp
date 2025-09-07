@@ -57,6 +57,7 @@ void ThreadManager::Worker(WorldGeneration& world_generation, World& world) {
 				std::unique_lock lock(completed_chunk_mutex_);
 				ChunkData data = world_generation.GenerateChunkData(task.chunk_coords);
 				auto chunk = std::make_unique<Chunk>(data, world);
+				// chunk->GenerateMainMesh();
 				completed_chunks_.push_back(std::move(chunk));
 				lock.unlock();
 			}

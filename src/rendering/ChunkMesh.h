@@ -5,6 +5,7 @@
 #ifndef CHUNKMESH_H
 #define CHUNKMESH_H
 
+#include <array>
 #include <gl/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
@@ -28,7 +29,8 @@ struct GLMesh {
 	VBO vbo;
 	EBO ebo;
 	uint32_t index_count = 0;
-	bool uploaded = false;
+	bool ids_created = false;
+	bool uploaded = true;
 };
 
 class ChunkMesh {
@@ -37,13 +39,17 @@ public:
 	ChunkMesh() = default;
 	~ChunkMesh() {FreeGPUResources();};
 
+
+
 	// === Mesh Generation ===
 	void GenerateMeshData(std::vector<CubeData>& cubes);
-	void Clear();
+	void GenerateMainMesh( std::vector<CubeData>& cubes);
+	void GenerateMeshCorners(std::vector<CubeData>& cubes);
 
 	int CalculateIndex(int x, int y, int z) const;
 	void AddIndices();
-	void CheckNearbyChunks(glm::ivec3 chunk_pos, World* world);
+	void CheckNearbyChunks(glm::ivec3, World* world);
+	CubeData GetNeighboringBlock(glm::i8vec3 block_position, std::vector<CubeData>& cubes);
 
 	// === GPU Management ===
 	void UploadToGPU();
@@ -53,13 +59,18 @@ public:
 	void RenderOpaque();
 	void RenderTransparent() const;
 
-	bool mesh_data_generated_ = true;
-
 private:
+	bool create_mesh = false;
+	bool mesh_created = false;
+	unsigned int vertex_index_ = 0;
+
 	int k_chunk_size_ = 32;
 
 	MeshData mesh_data_;
 	GLMesh gl_mesh_;
+
+	World* world_ = nullptr;
+	glm::ivec3 chunk_position_;
 
 	void AddMeshData(glm::u8 face, glm::u8vec3 position,glm::u8 texture,std::array<glm::u8,4> ambient_occlusion_level);
 	std::array<glm::u8,4> CalculateAmbientOcclusionLevels(glm::u8 face, std::vector<CubeData>& cubes, glm::u8vec3 position);
@@ -67,13 +78,15 @@ private:
 	// 	MeshData opaque_mesh_;      // Solid blocks
 	// 	MeshData transparent_mesh_; // Glass, water, leaves
 
-	std::vector<CubeData>* chunk_bottom_ = nullptr;
-	std::vector<CubeData>* chunk_top_ = nullptr;
-	std::vector<CubeData>* chunk_back_ = nullptr;
-	std::vector<CubeData>* chunk_front_ = nullptr;
-	std::vector<CubeData>* chunk_left_ = nullptr;
-	std::vector<CubeData>* chunk_right_ = nullptr;
-	bool found_all_neighbors_ = false;
+	std::array<bool,6> neighbor_chunks_found_ = {false,false,false,false,false,false};
+	std::array<glm::ivec3,6> neighbor_chunks_position_ = {
+		glm::ivec3(0,-1,0),
+		glm::ivec3(0,1,0),
+		glm::ivec3(0,0,-1),
+		glm::ivec3(0,0,1),
+		glm::ivec3(-1,0,0),
+		glm::ivec3(1,0,0)
+	};
 };
 
 

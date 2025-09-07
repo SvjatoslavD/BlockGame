@@ -34,11 +34,12 @@ public:
 	void Update(glm::ivec3 player_chunk_coords);
 	void RenderChunks(Shader& shader, Camera& camera);
 
+	int getRenderDistance() const { return render_distance_;}
 	WorldGeneration& getWorldGeneration() {return world_generation_;};
 
 private:
 	int seed_;
-	int render_distance_ = 5;
+	int render_distance_ = 1;
 	bool pause_chunk_loading = true;
 
 	unsigned int k_chunk_size_x_ = 32;
