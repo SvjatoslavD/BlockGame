@@ -30,7 +30,7 @@ public:
 	~WorldGeneration() = default;
 
 	void setSeed(int seed);
-	ChunkData GenerateChunkData(glm::ivec3 chunk_pos);
+	std::vector<ChunkData> GenerateChunkData(glm::ivec2 chunk_pos, int height_start, int height_end);
 
 private:
 	int seed_;

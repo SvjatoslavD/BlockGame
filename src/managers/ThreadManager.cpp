@@ -4,6 +4,8 @@
 
 #include "ThreadManager.h"
 
+#include <utility>
+
 #include "World.h"
 #include "WorldGeneration.h"
 
@@ -17,9 +19,9 @@ void ThreadManager::SetupThreads(WorldGeneration& world_generation, World& world
 	}
 }
 
-void ThreadManager::QueueChunkLoad(glm::ivec3 chunk_coords, int priority) {
+void ThreadManager::QueueChunkLoad(glm::ivec2 chunk_pos,int height_start, int height_end, int priority) {
 	std::unique_lock lock(task_queue_mutex_);
-	tasks_.emplace(Task(TaskType::CHUNK_LOAD,priority,chunk_coords));
+	tasks_.emplace(Task(TaskType::CHUNK_LOAD,priority,chunk_pos,height_start, height_end));
 	lock.unlock();
 }
 
@@ -54,11 +56,12 @@ void ThreadManager::Worker(WorldGeneration& world_generation, World& world) {
 
 		switch (task.type) {
 			case TaskType::CHUNK_LOAD: {
+				std::vector<ChunkData> chunk_data = world_generation.GenerateChunkData(task.chunk_pos, task.height_start, task.height_end);
+
 				std::unique_lock lock(completed_chunk_mutex_);
-				ChunkData data = world_generation.GenerateChunkData(task.chunk_coords);
-				auto chunk = std::make_unique<Chunk>(data, world);
-				// chunk->GenerateMainMesh();
-				completed_chunks_.push_back(std::move(chunk));
+				for (auto data : chunk_data) {
+					completed_chunks_.push_back(std::make_unique<Chunk>(data,world));
+				}
 				lock.unlock();
 			}
 				break;

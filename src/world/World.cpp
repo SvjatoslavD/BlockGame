@@ -16,13 +16,23 @@ void World::Setup(int seed, ThreadManager* thread_manager) {
 	world_generation_.setSeed(seed_);
 
 	// load starting chunks into queue
-	for (int y = -render_distance_; y <= render_distance_; y++) {
-		for (int x = -render_distance_; x <= render_distance_; x++) {
-			for (int z = -render_distance_; z <= render_distance_; z++) {
-				GenerateChunk(glm::ivec3(x,y,z));
+
+	std::vector<glm::ivec2> spiralOffsets;
+	for (int r = 0; r <= render_distance_; r++) {
+		for (int dx = -r; dx <= r; dx++) {
+			for (int dz = -r; dz <= r; dz++) {
+				if (std::max(std::abs(dx), std::abs(dz)) == r) {
+					spiralOffsets.emplace_back(dx, dz);
+				}
 			}
 		}
 	}
+
+	for (auto chunk_coord:spiralOffsets) {
+		thread_manager_->QueueChunkLoad(chunk_coord,-1,render_distance_,1);
+	}
+
+
 }
 
 World::~World() {
@@ -82,7 +92,7 @@ void World::RenderChunks(Shader& shader, Camera& camera) {
 
 void World::GenerateChunk(glm::ivec3 key) {
 	if (chunks_.find(key) == chunks_.end()) {
-		thread_manager_->QueueChunkLoad(key, 1);
+		thread_manager_->QueueChunkLoad(glm::ivec2(key.z,key.z),key.y,key.y, 1);
 	}
 }
 

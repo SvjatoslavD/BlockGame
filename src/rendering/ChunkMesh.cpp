@@ -31,6 +31,7 @@ void ChunkMesh::CheckNearbyChunks(glm::ivec3 chunk_pos, World* world) {
 		chunk_position_ = chunk_pos;
 	}
 
+	// Only generate the mesh data when all neighboring chunks are loaded or outside renderdistance
 	int dist = world_->getRenderDistance();
 	for (int i = 0; i < 6; i++) {
 		if (!neighbor_chunks_found_[i]) {
@@ -96,6 +97,9 @@ void ChunkMesh::UploadToGPU() {
 
 	gl_mesh_.vbo.SetData(mesh_data_.vertices);
 	gl_mesh_.ebo.SetData(mesh_data_.indices);
+	// mesh_data_.vertices.clear();
+	// mesh_data_.indices.clear();
+	// mesh_data_.face_count = 0;
 
 	gl_mesh_.vbo.Bind();
 	gl_mesh_.ebo.Bind();

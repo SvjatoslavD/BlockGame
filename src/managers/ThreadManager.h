@@ -23,18 +23,20 @@ struct Task {
 	TaskType type;
 	int priority;
 
-	glm::ivec3 chunk_coords;
+	glm::ivec2 chunk_pos;
+	int height_start;
+	int height_end;
 };
 
 
 class ThreadManager {
 public:
-	explicit ThreadManager(size_t num_threads = std::thread::hardware_concurrency() - 2); // keep one thread for general OS use
+	explicit ThreadManager(size_t num_threads = 1); // keep one thread for general OS use and one for the main program
 	~ThreadManager() = default;
 
 	void Shutdown();
 	void SetupThreads(WorldGeneration& world_generation, World& world);
-	void QueueChunkLoad(glm::ivec3 chunk_coords, int priority);
+	void QueueChunkLoad(glm::ivec2 chunk_pos,int height_start, int height_end, int priority);
 	std::vector<std::unique_ptr<Chunk>> getCompletedChunks();
 
 private:

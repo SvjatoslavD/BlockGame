@@ -55,18 +55,16 @@ WorldGeneration::WorldGeneration() {
 }
 
 
-ChunkData WorldGeneration::GenerateChunkData(glm::ivec3 chunk_pos) {
-	ChunkMetaData meta_data;
-	std::vector<CubeData> cube_data_vec;
-	cube_data_vec.reserve(k_chunk_size_x_*k_chunk_size_y_*k_chunk_size_z_);
-
-    auto chunk_coords = glm::fvec3(chunk_pos);
-	int y_offset = (int)chunk_coords.y * (int)k_chunk_size_y_;
+std::vector<ChunkData> WorldGeneration::GenerateChunkData(glm::ivec2 chunk_pos, int height_start, int height_end) {
+	std::vector<ChunkMetaData> meta_data;
+	meta_data.resize(height_end - height_start);
+	std::vector<std::vector<CubeData>> cube_data_vec;
+	cube_data_vec.resize(height_end - height_start);
 
     for (int x = 0; x < k_chunk_size_x_; x++) {
     	for (int z = 0; z < k_chunk_size_z_; z++) {
-    		float world_x = chunk_coords.x * k_chunk_size_x_ + x;
-    		float world_z = chunk_coords.z * k_chunk_size_z_ + z;
+    		float world_x = chunk_pos.x * (int)k_chunk_size_x_ + x;
+    		float world_z = chunk_pos.y * (int)k_chunk_size_z_ + z;
 
     		// Combine multiple noise octaves
     		float continent = continent_noise_.GetNoise(world_x, world_z);
@@ -82,53 +80,60 @@ ChunkData WorldGeneration::GenerateChunkData(glm::ivec3 chunk_pos) {
     		int additional_height = (int)(peak_and_valley_height * erosion_mult);
     		int combined_noise = base_height + additional_height;
 
-    		for (int y = 0; y < k_chunk_size_y_; y++) {
-    			int true_y = y + y_offset;
-    			float cave_noise = cave_noise_.GetNoise(world_x, world_z, (float)true_y);
-    			float cave_intersect_noise = cave_intersect_noise_.GetNoise(world_x+64.f, world_z, (float)true_y+64.f);
+    		for (int chunk_y = height_start; chunk_y < height_end; chunk_y++) {
+    			for (int y = 0; y < k_chunk_size_y_; y++) {
+    				int true_y = y + (chunk_y * k_chunk_size_y_);
+    				float cave_noise = cave_noise_.GetNoise(world_x, world_z, (float)true_y);
+    				float cave_intersect_noise = cave_intersect_noise_.GetNoise(world_x+64.f, world_z, (float)true_y+64.f);
 
-    			CubeData cube_data{};
-    			cube_data.position = glm::vec3(x, y, z);
+    				CubeData cube_data{};
+    				cube_data.position = glm::vec3(x, y, z);
 
-    			if (true_y <= combined_noise) {
-    				if (continent_height > 190 && erosion_mult > 0.6 && peak_and_valley_height > -15 && true_y >= combined_noise - 4) {cube_data.type = SNOW_BLOCK; }
-    				else if (continent_height > 110 && erosion_mult > .4) {cube_data.type = STONE_BLOCK; }
-    				else {
-    					if (true_y == combined_noise) {cube_data.type = GRASS_BLOCK;}
-    					else if (true_y >= combined_noise - 3) {cube_data.type = DIRT_BLOCK;}
-    					else {cube_data.type = STONE_BLOCK;}
+    				if (true_y <= combined_noise) {
+    					if (continent_height > 190 && erosion_mult > 0.6 && peak_and_valley_height > -15 && true_y >= combined_noise - 4) {cube_data.type = SNOW_BLOCK; }
+    					else if (continent_height > 110 && erosion_mult > .4) {cube_data.type = STONE_BLOCK; }
+    					else {
+    						if (true_y == combined_noise) {cube_data.type = GRASS_BLOCK;}
+    						else if (true_y >= combined_noise - 3) {cube_data.type = DIRT_BLOCK;}
+    						else {cube_data.type = STONE_BLOCK;}
+    					}
+
+    					if ((pow(cave_noise,2) + pow(cave_intersect_noise,2))< 0.001 && true_y < 96) {
+    						cube_data.is_air = true;
+    						meta_data[chunk_y - height_start].air_count++;
+    					}
+    					else {
+    						meta_data[chunk_y - height_start].solid_block_count++;
+    					}
     				}
-
-    				if ((pow(cave_noise,2) + pow(cave_intersect_noise,2))< 0.001 && true_y < 96) {
+    				// simulate where water would be
+    				// else if (true_y > combined_noise && true_y < sea_level_) {
+    				// 	cube_data.type = SAND_BLOCK;
+    				//
+    				// 	meta_data.solid_block_count++;
+    				// }
+    				else {
     					cube_data.is_air = true;
-    					meta_data.air_count++;
-    				}
-    				else {
-    					meta_data.solid_block_count++;
-    				}
-    			}
-    			// simulate where water would be
-    			// else if (true_y > combined_noise && true_y < sea_level_) {
-    			// 	cube_data.type = SAND_BLOCK;
-			    //
-    			// 	meta_data.solid_block_count++;
-    			// }
-    			else {
-    				cube_data.is_air = true;
-    				cube_data.type = DIRT_BLOCK; // Air blocks
+    					cube_data.type = DIRT_BLOCK; // Air blocks
 
-    				meta_data.air_count++;
+    					meta_data[chunk_y - height_start].air_count++;
+    				}
+
+    				cube_data_vec[chunk_y - height_start].emplace_back(cube_data);
     			}
 
-    			cube_data_vec.emplace_back(cube_data);
+
     		}
-
     	}
     }
+	std::vector<ChunkData> chunk_data;
 
-	meta_data.CalculateFlags();
+	for (int i = height_start; i < height_end; i++) {
+		meta_data[i - height_start].CalculateFlags();
 
-	auto chunk_data = ChunkData(chunk_coords,meta_data,cube_data_vec);
+		chunk_data.emplace_back(glm::ivec3(chunk_pos.x,i,chunk_pos.y),meta_data[i - height_start],cube_data_vec[i - height_start]);
+	}
+
 	return chunk_data;
 }
 
