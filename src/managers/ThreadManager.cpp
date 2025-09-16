@@ -56,11 +56,12 @@ void ThreadManager::Worker(WorldGeneration& world_generation, World& world) {
 
 		switch (task.type) {
 			case TaskType::CHUNK_LOAD: {
+				// This prevents threads from sitting with Chunk columns loaded already
+				std::unique_lock lock(completed_chunk_mutex_);
 				std::vector<ChunkData> chunk_data = world_generation.GenerateChunkData(task.chunk_pos, task.height_start, task.height_end);
 
-				std::unique_lock lock(completed_chunk_mutex_);
 				for (auto data : chunk_data) {
-					completed_chunks_.push_back(std::make_unique<Chunk>(data,world));
+					completed_chunks_.emplace_back(std::make_unique<Chunk>(data, world));
 				}
 				lock.unlock();
 			}

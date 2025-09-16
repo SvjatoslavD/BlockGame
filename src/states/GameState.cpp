@@ -21,7 +21,17 @@ GameState::GameState(StateManager* state_manager, Application* application) :
 	application_->getThreadManager()->SetupThreads(world_.getWorldGeneration(),world_);
 }
 
-void GameState::HandleInput(sf::Event& event) {
+void GameState::HandleInput(float delta_time) {
+	if (!paused) {
+		sf::Vector2i mouse_pos = ImGui::GetMousePos();
+		sf::Vector2f display_size = ImGui::GetIO().DisplaySize;
+		// This would usually be part of the render function, but due to
+		// game logic running at 60 ticks per second, you miss calls for NewFrame
+		ImGui::SFML::Update(mouse_pos,display_size,sf::seconds(delta_time));
+	}
+}
+
+void GameState::HandleEvents(sf::Event& event) {
 	if (!paused) {
 		if (const auto* resized = event.getIf<sf::Event::Resized>()) {
 			// adjust the viewport when the window is resized
@@ -30,16 +40,12 @@ void GameState::HandleInput(sf::Event& event) {
 
 		ImGui::SFML::ProcessEvent(*application_->getWindow(), event);
 
-		player_.HandleInput(event);
+		player_.HandleInputAndEvents(event);
 	}
 }
 
 void GameState::Update(sf::Time delta_time) {
 	if (!paused) {
-		sf::Vector2i mouse_pos = ImGui::GetMousePos();
-		sf::Vector2f display_size = ImGui::GetIO().DisplaySize;
-		ImGui::SFML::Update(mouse_pos,display_size,delta_time);
-
 		player_.Update(delta_time.asSeconds(), &default_shader_);
 		world_.Update(player_.getChunkCoordinates());
 	}
@@ -50,4 +56,8 @@ void GameState::Draw() {
 	glActiveTexture(GL_TEXTURE0);
 	test_.Bind();
 	world_.RenderChunks(default_shader_, *player_.getCamera());
+
+	// ImGui::Begin("Title",nullptr,
+	// 			 ImGuiWindowFlags_NoTitleBar);
+	// ImGui::End();
 }

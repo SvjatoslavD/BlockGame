@@ -17,7 +17,8 @@ class GameState : public DefaultState {
 public:
 	GameState(StateManager* state_manager, Application* application);
 
-	void HandleInput(sf::Event& event) override;
+	void HandleEvents(sf::Event& event) override;
+	void HandleInput(float delta_time) override;
 	void Update(sf::Time delta_time) override;
 	void Draw() override;
 	~GameState() override = default;

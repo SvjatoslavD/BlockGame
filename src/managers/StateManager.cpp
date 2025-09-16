@@ -53,15 +53,16 @@ void StateManager::PopState() {
 	}
 }
 
-void StateManager::HandleInput() {
+void StateManager::HandleInput(float delta_time) {
 	assert(state_manager_setup_);
+	states_.top()->HandleInput(delta_time);
 	while (auto event = window_->pollEvent()) {
 		// events/inputs which can be used in all states
 		if (event->is<sf::Event::Closed>()) { application_->EndApplication(); }
 
 		if (!states_.empty()) {
 			// events/inputs specific to the state
-			states_.top()->HandleInput(*event);
+			states_.top()->HandleEvents(*event);
 		}
 
 		#ifdef _DEBUG

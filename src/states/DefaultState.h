@@ -19,7 +19,8 @@ public:
 	void Resume() { paused = false; };
 	bool isPaused() const { return paused;}
 
-	virtual void HandleInput(sf::Event& event) {}
+	virtual void HandleEvents(sf::Event& event) {}
+	virtual void HandleInput(float delta_time) {}
 	virtual void Update(sf::Time delta_time) {}
 	virtual void Draw() {}
 

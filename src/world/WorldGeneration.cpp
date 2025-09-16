@@ -55,11 +55,11 @@ WorldGeneration::WorldGeneration() {
 }
 
 
-std::vector<ChunkData> WorldGeneration::GenerateChunkData(glm::ivec2 chunk_pos, int height_start, int height_end) {
+std::vector<ChunkData> WorldGeneration::GenerateChunkData(const glm::ivec2 chunk_pos, const int height_start, const int height_end) {
 	std::vector<ChunkMetaData> meta_data;
-	meta_data.resize(height_end - height_start);
+	meta_data.resize(height_end - height_start + 1);
 	std::vector<std::vector<CubeData>> cube_data_vec;
-	cube_data_vec.resize(height_end - height_start);
+	cube_data_vec.resize(height_end - height_start + 1);
 
     for (int x = 0; x < k_chunk_size_x_; x++) {
     	for (int z = 0; z < k_chunk_size_z_; z++) {
@@ -80,16 +80,17 @@ std::vector<ChunkData> WorldGeneration::GenerateChunkData(glm::ivec2 chunk_pos, 
     		int additional_height = (int)(peak_and_valley_height * erosion_mult);
     		int combined_noise = base_height + additional_height;
 
-    		for (int chunk_y = height_start; chunk_y < height_end; chunk_y++) {
+    		for (int chunk_y = height_start; chunk_y <= height_end; chunk_y++) {
     			for (int y = 0; y < k_chunk_size_y_; y++) {
-    				int true_y = y + (chunk_y * k_chunk_size_y_);
-    				float cave_noise = cave_noise_.GetNoise(world_x, world_z, (float)true_y);
-    				float cave_intersect_noise = cave_intersect_noise_.GetNoise(world_x+64.f, world_z, (float)true_y+64.f);
+					const int true_y = y + (chunk_y * (int)k_chunk_size_y_);
 
     				CubeData cube_data{};
     				cube_data.position = glm::vec3(x, y, z);
 
     				if (true_y <= combined_noise) {
+    					const float cave_noise = cave_noise_.GetNoise(world_x, world_z, (float)true_y);
+    					const float cave_intersect_noise = cave_intersect_noise_.GetNoise(world_x+64.f, world_z, (float)true_y+64.f);
+
     					if (continent_height > 190 && erosion_mult > 0.6 && peak_and_valley_height > -15 && true_y >= combined_noise - 4) {cube_data.type = SNOW_BLOCK; }
     					else if (continent_height > 110 && erosion_mult > .4) {cube_data.type = STONE_BLOCK; }
     					else {
@@ -122,13 +123,12 @@ std::vector<ChunkData> WorldGeneration::GenerateChunkData(glm::ivec2 chunk_pos, 
     				cube_data_vec[chunk_y - height_start].emplace_back(cube_data);
     			}
 
-
     		}
     	}
     }
 	std::vector<ChunkData> chunk_data;
 
-	for (int i = height_start; i < height_end; i++) {
+	for (int i = height_start; i <= height_end; i++) {
 		meta_data[i - height_start].CalculateFlags();
 
 		chunk_data.emplace_back(glm::ivec3(chunk_pos.x,i,chunk_pos.y),meta_data[i - height_start],cube_data_vec[i - height_start]);

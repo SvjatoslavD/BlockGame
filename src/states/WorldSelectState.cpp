@@ -13,7 +13,17 @@ WorldSelectState::WorldSelectState(StateManager* state_manager, Application* app
 	DefaultState(state_manager, application) {
 }
 
-void WorldSelectState::HandleInput(sf::Event& event) {
+void WorldSelectState::HandleInput(float delta_time) {
+	if (!paused) {
+		sf::Vector2i mouse_pos = ImGui::GetMousePos();
+		sf::Vector2f display_size = ImGui::GetIO().DisplaySize;
+		// This would usually be part of the render function, but due to
+		// game logic running at 60 ticks per second, you miss calls for NewFrame
+		ImGui::SFML::Update(mouse_pos,display_size,sf::seconds(delta_time));
+	}
+}
+
+void WorldSelectState::HandleEvents(sf::Event& event) {
 	if (!paused) {
 		ImGui::SFML::ProcessEvent(*application_->getWindow(), event);
 	}

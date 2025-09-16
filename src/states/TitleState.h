@@ -11,7 +11,8 @@ class TitleState : public DefaultState {
 public:
 	explicit TitleState(StateManager* state_manager, Application* application);
 
-	void HandleInput(sf::Event& event) override;
+	void HandleEvents(sf::Event& event) override;
+	void HandleInput(float delta_time) override;
 	void Update(sf::Time delta_time) override;
 	void Draw() override;
 	~TitleState() override = default;

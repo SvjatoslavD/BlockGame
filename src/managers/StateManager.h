@@ -28,7 +28,7 @@ public:
 	void PopState();
 	unsigned int getStatesSize() const { return states_.size();}
 
-	void HandleInput();
+	void HandleInput(float delta_time);
 	void Update(sf::Time delta_time);
 	void Draw();
 

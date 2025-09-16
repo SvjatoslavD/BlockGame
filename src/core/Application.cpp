@@ -35,6 +35,7 @@ void Application::SetupWindow() {
 
 	// create the window
 	window_.create(sf::VideoMode({ win_width_, win_height_ }), "BlockGame", sf::Style::Default, sf::State::Windowed, settings);
+	window_.setFramerateLimit(60);
 
 	// set window as target of opengl
 	bool active = window_.setActive();
@@ -63,16 +64,14 @@ void Application::GameLoop() {
 	sf::Time delta_time;
 
 	float last_logic_frame = 0.0f;
-	float last_render_frame = 0.0f;
 
 	while (is_running_) {
 		// calculate delta time per frame
 		delta_time = clock.restart();
 
 		last_logic_frame += delta_time.asSeconds();
-		last_render_frame += delta_time.asSeconds();
 
-		state_manager_.HandleInput();
+		state_manager_.HandleInput(delta_time.asSeconds());
 
 		// logic
 		if (last_logic_frame >= k_logic_delta_time_) {
@@ -82,11 +81,8 @@ void Application::GameLoop() {
 		}
 
 		// rendering
-		if (last_render_frame >= render_delta_time_) {
-			last_render_frame -= render_delta_time_;
+		state_manager_.Draw();
 
-			state_manager_.Draw();
-		}
 	}
 }
 

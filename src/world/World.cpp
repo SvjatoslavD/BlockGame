@@ -29,7 +29,7 @@ void World::Setup(int seed, ThreadManager* thread_manager) {
 	}
 
 	for (auto chunk_coord:spiralOffsets) {
-		thread_manager_->QueueChunkLoad(chunk_coord,-1,render_distance_,1);
+		thread_manager_->QueueChunkLoad(chunk_coord,-render_distance_,render_distance_,1);
 	}
 
 

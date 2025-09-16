@@ -18,7 +18,7 @@ void Player::Setup(Application* application, float health, glm::vec3 position) {
 	camera_.Setup(win_width, win_height, glm::vec3(0.f, 110.f, 0.f));
 }
 
-void Player::HandleInput(sf::Event& event) {
+void Player::HandleInputAndEvents(sf::Event& event) {
 	sf::Window* window = application_->getWindow();
 
 	if (const auto* mouseMoved = event.getIf<sf::Event::MouseMoved>()) {

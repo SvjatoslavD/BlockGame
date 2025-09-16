@@ -12,7 +12,8 @@ public:
 	explicit WorldSelectState(StateManager* state_manager, Application* application);
 	~WorldSelectState() override = default;
 
-	void HandleInput(sf::Event& event) override;
+	void HandleEvents(sf::Event& event) override;
+	void HandleInput(float delta_time) override;
 	void Update(sf::Time delta_time) override;
 	void Draw() override;
 

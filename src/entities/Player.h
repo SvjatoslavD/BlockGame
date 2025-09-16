@@ -16,7 +16,7 @@ public:
 	~Player() = default;
 
 	void Setup(Application* application, float health, glm::vec3 position);
-	void HandleInput(sf::Event& event);
+	void HandleInputAndEvents(sf::Event& event);
 	void Update(float delta_time, Shader* our_shader);
 
 	glm::vec3 getGlobalCoordinates() const { return position_;};
